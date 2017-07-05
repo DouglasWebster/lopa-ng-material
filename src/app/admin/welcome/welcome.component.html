@@ -1,0 +1,29 @@
+<div mat-app-background>
+  <md-toolbar color="primary">
+  </md-toolbar>
+
+  <md-card>
+    <h1>LOPA</h1>
+    <img src="assets/img/lopaLogo.svg" width="150px" class="user-avatar" />
+    <h1>Welcome</h1>
+    <div>
+      <div *ngIf="currentUser">
+        <p>You are logged into the LOPA APP</p>
+        <p>
+          <a [routerLink]="['/dashboard/home']" md-raised-button color="primary">Enter</a>
+          <a [routerLink]="['/login']" md-raised-button>Logout</a>
+          <a *ngIf="currentUser.admin" [routerLink]="['/register']" md-raised-button>Administration</a>
+        </p>
+      </div>
+      <div *ngIf="!currentUser">
+        <p>Please login to the LOPA APP</p>
+        <p>
+          <button md-raised-button color="primary" (click)="doLogin()">Login</button>
+          <button md-raised-button color="accent" (click)="doNewUser()">Register</button>
+        </p>
+      </div>
+    </div>
+  </md-card>
+
+  <!--<app-login-alert></app-login-alert>-->
+</div>

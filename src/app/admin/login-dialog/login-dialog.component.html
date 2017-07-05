@@ -1,0 +1,21 @@
+<h1 class="mdl-dialog-title" style="text-align: center">App Login</h1>
+
+<form [formGroup]="loginForm" (ngSubmit)="login()" ngnovalidate>
+  <div class="mdl-dialog-content">
+    <div class="form-group">
+      <md-input-container style="width: 100%">
+      <input mdInput class="form-control" formControlName="name" placeholder="Name">
+      </md-input-container>
+    </div>
+    <div class="form-group">
+      <md-input-container style="width: 100%">
+      <input mdInput type="password" class="form-control" formControlName="password" placeholder="Password">
+      </md-input-container>
+    </div>
+  </div>
+
+  <div class="mdl-dialog-actions" style="text-align: center">
+    <button md-raised-button color="primary" type="submit" [disabled]="!loginForm.valid" color="primary">Login</button>
+    <button md-button md-dialog-close=false color="warn">Cancel</button>
+  </div>
+</form>
