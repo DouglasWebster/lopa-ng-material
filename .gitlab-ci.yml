@@ -1,0 +1,20 @@
+image: trion/ng-cli-karma
+
+before_script:
+    - npm install
+
+tslint_job:
+  stage: test
+  tags:
+    - linux
+    - docker
+  script:
+    - ng lint --type-check true
+
+test_job:
+ stage: test
+ tags:
+   - linux
+   - docker
+ script:
+   - ng test --sr --cc
