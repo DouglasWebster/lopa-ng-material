@@ -72,6 +72,7 @@ describe('RegisterDialogComponent', () => {
   }
 
   let component: RegisterDialogComponent;
+  let dialogRef: MdDialogRef<RegisterDialogComponent>;
   let dialog: MdDialog;
   // tslint:disable-next-line:prefer-const
   let overlayContainerElement: HTMLElement;
@@ -104,11 +105,45 @@ describe('RegisterDialogComponent', () => {
   }));
 
   beforeEach(() => {
-    const dialogRef = dialog.open(RegisterDialogComponent);
-    component = dialogRef.componentInstance;
+    viewContainerFixture = TestBed.createComponent(DlgTestChildViewContainerComponent);
+    viewContainerFixture.detectChanges();
+    testViewContainerRef = viewContainerFixture.componentInstance.childViewContainer;
   });
 
-  it('should be created', () => {
+  it('should be created', fakeAsync(() => {
+    dialogRef = dialog.open(RegisterDialogComponent);
+
+    viewContainerFixture.detectChanges();
+    component = dialogRef.componentInstance;
+
     expect(component).toBeTruthy();
-  });
+
+    dialogRef.close()
+    tick(500);
+    viewContainerFixture.detectChanges();
+
+  }));
+
+    it('should return false when cancel button pressed', fakeAsync(() => {
+    let result = true;
+    dialogRef = dialog.open(RegisterDialogComponent);
+
+    viewContainerFixture.detectChanges();
+    component = dialogRef.componentInstance;
+
+    dialogRef.afterClosed().subscribe(dlgResult => {
+      console.log('dialog result: ', dlgResult);
+      result = dlgResult;
+      console.log('result in subscribe:', result);
+    });
+
+    dialogRef.close(false);
+
+    tick(500);
+    viewContainerFixture.detectChanges();
+
+    console.log('result after subscribe:', result);
+    expect(result).toBeFalsy();
+  }));
+
 });
