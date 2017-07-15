@@ -6,7 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MaterialModule, MdDialogModule, MdDialog, MdDialogRef, MdButton } from '@angular/material';
+import { MaterialModule, MdDialogModule, MdDialog, MdDialogRef, MdButton, OverlayContainer } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';
 import { Subscriber } from 'rxjs/Subscriber';
@@ -56,7 +56,7 @@ const TEST_DIRECTIVES = [
 })
 class DialogTestModule { }
 
-describe('LoginDialogComponent', () => {
+describe('Login Dialog Component', () => {
 
   // fake the Authentification service
   const fakeUser =
@@ -71,13 +71,11 @@ describe('LoginDialogComponent', () => {
 
   let dialog: MdDialog;
   let dialogRef: MdDialogRef<LoginDialogComponent>;
-  let component: LoginDialogComponent;
-  let debugEl: DebugElement;
+  // let component: LoginDialogComponent;
 
-  // tslint:disable-next-line:prefer-const
   let overlayContainerElement: HTMLElement;
 
-  let testViewContainerRef: ViewContainerRef;
+  // let testViewContainerRef: ViewContainerRef;
 
   let viewContainerFixture: ComponentFixture<DlgTestChildViewContainerComponent>;
 
@@ -90,6 +88,12 @@ describe('LoginDialogComponent', () => {
       declarations: [
       ],
       providers: [
+        {
+          provide: OverlayContainer, useFactory: () => {
+            overlayContainerElement = document.createElement('div');
+            return { getContainerElement: () => overlayContainerElement };
+          }
+        },
         { provide: AuthenticationService, useValue: authenticationServiceStub },
         AlertService
       ]
@@ -104,86 +108,128 @@ describe('LoginDialogComponent', () => {
   beforeEach(() => {
     viewContainerFixture = TestBed.createComponent(DlgTestChildViewContainerComponent);
     viewContainerFixture.detectChanges();
-    testViewContainerRef = viewContainerFixture.componentInstance.childViewContainer;
-    debugEl = viewContainerFixture.debugElement;
+    // testViewContainerRef = viewContainerFixture.componentInstance.childViewContainer;
+    dialogRef = dialog.open(LoginDialogComponent);
+    viewContainerFixture.detectChanges();
 
   });
 
   it('should be created', fakeAsync(() => {
-    dialogRef = dialog.open(LoginDialogComponent);
-    component = dialogRef.componentInstance;
-    viewContainerFixture.detectChanges();
+    expect(dialogRef.componentInstance instanceof LoginDialogComponent).toBe(true, 'Failed to open');
+    expect(overlayContainerElement.querySelector('h1').innerText).toEqual('App Login');
 
-    expect(component).toBeTruthy();
-    dialogRef.close()
+    dialogRef.close();
     tick(500);
     viewContainerFixture.detectChanges();
   }));
 
-  it('should return false when cancel button pressed', fakeAsync(() => {
-    let result = true;
-    dialogRef = dialog.open(LoginDialogComponent);
+  it('should close and return false when cancel button pressed', async(() => {
+    const afterCloseCallback = jasmine.createSpy('afterClose callback');
 
+    dialogRef.afterClosed().subscribe(afterCloseCallback);
+    (overlayContainerElement.querySelector('button[md-dialog-close="false"]') as HTMLElement).click();
     viewContainerFixture.detectChanges();
-    component = dialogRef.componentInstance;
 
-    dialogRef.afterClosed().subscribe(dlgResult => {
-      console.log('dialog result: ', dlgResult);
-      result = dlgResult;
-      console.log('result in subscribe:', result);
+    viewContainerFixture.whenStable().then(() => {
+      expect(overlayContainerElement.querySelector('md-dialog-container')).toBeNull('Dialog box still open');
+      expect(afterCloseCallback).toHaveBeenCalledWith('false');
     });
-
-    dialogRef.close(false);
-
-    tick(500);
-    viewContainerFixture.detectChanges();
-
-    console.log('result after subscribe:', result);
-    expect(result).toBeFalsy();
   }));
 
   describe('should disable login button', () => {
     it('without a user and password entry', fakeAsync(() => {
-      dialogRef = dialog.open(LoginDialogComponent);
-      component = dialogRef.componentInstance;
-      viewContainerFixture.detectChanges();
 
-      expect(component).toBeTruthy();
+      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      expect(btn.getAttribute('ng-reflect-disabled')).toBe('true');
+
       dialogRef.close()
       tick(500);
       viewContainerFixture.detectChanges();
     }));
 
-    it('with a user but without a password entry', fakeAsync(() => {
-      dialogRef = dialog.open(LoginDialogComponent);
-      component = dialogRef.componentInstance;
+    it('with a user entry but without a password entry', async(() => {
+
+      (overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement).value = 'DD';
       viewContainerFixture.detectChanges();
 
-      const btns = debugEl.queryAll(By.css('button'));
-      // .find(b => {
-      //   if (b.nativeElement.textContent === 'Login') {
-      //     return true;
-      //   }
-      // });
-      console.log('btns details: ', debugEl);
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+        const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]');
+        const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]');
 
-      expect(component).toBeTruthy();
-      dialogRef.close()
-      tick(500);
-      viewContainerFixture.detectChanges();
+        expect((nameInput as HTMLInputElement).value).toEqual('DD');
+        expect((passwordInput as HTMLInputElement).value).toEqual('');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
     }));
 
-    it('with a password but without a user entry', fakeAsync(() => {
-      dialogRef = dialog.open(LoginDialogComponent);
-      component = dialogRef.componentInstance;
+    it('with a password but without a user entry', async(() => {
+
+      (overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement).value = 'Password';
       viewContainerFixture.detectChanges();
 
-      expect(component).toBeTruthy();
-      dialogRef.close()
-      tick(500);
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+        const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]');
+        const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]');
+
+        expect((nameInput as HTMLInputElement).value).toEqual('');
+        expect((passwordInput as HTMLInputElement).value).toEqual('Password');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
+    }));
+
+    it('with a valid user name but invalid password', async(() => {
+
+      (overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement).value = 'ABC';
+      (overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement).value = '1234567';
       viewContainerFixture.detectChanges();
+
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+        const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]');
+        const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]');
+
+        expect((nameInput as HTMLInputElement).value).toEqual('ABC');
+        expect((passwordInput as HTMLInputElement).value).toEqual('1234567');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
+    }));
+
+    it('with an invalid user name but with a valid password', async(() => {
+
+      (overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement).value = 'AB';
+      (overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement).value = '12345678';
+      viewContainerFixture.detectChanges();
+
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+        const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]');
+        const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]');
+
+        expect((nameInput as HTMLInputElement).value).toEqual('AB');
+        expect((passwordInput as HTMLInputElement).value).toEqual('12345678');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
     }));
   });
 
+  it('should enable the login button when a valid username and password are entered', fakeAsync(() => {
+    (overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement).value = 'ABC';
+    (overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement).value = '12345678';
+    viewContainerFixture.detectChanges();
+    tick();
+
+    viewContainerFixture.detectChanges();
+    const loginBtn = overlayContainerElement.querySelector('button[md-raised-button]');
+    const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]');
+    const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]');
+    console.log('Login Button is:', loginBtn.textContent);
+    console.log('Login Button is:', loginBtn.getAttribute('ng-reflect-disabled'));
+
+    expect((nameInput as HTMLInputElement).value).toEqual('ABC');
+    expect((passwordInput as HTMLInputElement).value).toEqual('12345678');
+    expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('false');
+  }));
 });
 
