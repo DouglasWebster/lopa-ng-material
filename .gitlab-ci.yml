@@ -15,8 +15,7 @@ test_job:
   stage: test
   tags:
     - linux
-    - angular
-    - angular material 2
+    - docker
   script:
     - ng test --no-progress --sr --cc
     - ./node_modules/.bin/codecov
