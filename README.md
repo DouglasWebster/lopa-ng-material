@@ -1,4 +1,5 @@
-# LopaNgMaterial
+# LopaNgMaterial 
+[![build status](https://gitlab.com/douglaswebster/lopa-ng-material/badges/develop/build.svg)](https://gitlab.com/douglaswebster/lopa-ng-material/commits/develop)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.1.1.
 
