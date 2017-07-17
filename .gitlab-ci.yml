@@ -18,4 +18,3 @@ test_job:
     - docker
   script:
     - ng test --no-progress --sr --cc
-    - ./node_modules/.bin/codecov
