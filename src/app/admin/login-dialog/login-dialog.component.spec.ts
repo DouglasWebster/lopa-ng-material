@@ -116,7 +116,9 @@ describe('Login Dialog Component', () => {
 
   it('should be created', fakeAsync(() => {
     expect(dialogRef.componentInstance instanceof LoginDialogComponent).toBe(true, 'Failed to open');
-    expect(overlayContainerElement.querySelector('h1').innerText).toEqual('App Login');
+    const heading = overlayContainerElement.querySelector('h1');
+    expect(heading.innerText).toEqual('App Login');
+
 
     dialogRef.close();
     tick(500);
@@ -148,88 +150,90 @@ describe('Login Dialog Component', () => {
     }));
 
     it('with a user entry but without a password entry', async(() => {
-
-      (overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement).value = 'DD';
+      const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      nameInput.value = 'DD';
+      nameInput.dispatchEvent(new Event('input'));
       viewContainerFixture.detectChanges();
 
       viewContainerFixture.whenStable().then(() => {
         viewContainerFixture.detectChanges();
-        const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]');
-        const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]');
 
-        expect((nameInput as HTMLInputElement).value).toEqual('DD');
-        expect((passwordInput as HTMLInputElement).value).toEqual('');
+        expect(nameInput.value).toEqual('DD');
+        expect(passwordInput.value).toEqual('');
         expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
     it('with a password but without a user entry', async(() => {
-
-      (overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement).value = 'Password';
+      const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      passwordInput.value = 'Password';
+      passwordInput.dispatchEvent(new Event('input'));
       viewContainerFixture.detectChanges();
 
       viewContainerFixture.whenStable().then(() => {
         viewContainerFixture.detectChanges();
-        const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]');
-        const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]');
 
-        expect((nameInput as HTMLInputElement).value).toEqual('');
-        expect((passwordInput as HTMLInputElement).value).toEqual('Password');
+        expect(nameInput.value).toEqual('');
+        expect(passwordInput.value).toEqual('Password');
         expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
     it('with a valid user name but invalid password', async(() => {
-
-      (overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement).value = 'ABC';
-      (overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement).value = '1234567';
+      const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      nameInput.value = 'ABC';
+      nameInput.dispatchEvent(new Event('input'));
+      passwordInput.value = '1234567';
+      passwordInput.dispatchEvent(new Event('input'));
       viewContainerFixture.detectChanges();
 
       viewContainerFixture.whenStable().then(() => {
         viewContainerFixture.detectChanges();
-        const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]');
-        const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]');
 
-        expect((nameInput as HTMLInputElement).value).toEqual('ABC');
-        expect((passwordInput as HTMLInputElement).value).toEqual('1234567');
+        expect(nameInput.value).toEqual('ABC');
+        expect(passwordInput.value).toEqual('1234567');
         expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
     it('with an invalid user name but with a valid password', async(() => {
-
-      (overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement).value = 'AB';
-      (overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement).value = '12345678';
+      const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      nameInput.value = 'AB';
+      nameInput.dispatchEvent(new Event('input'));
+      passwordInput.value = '12345678';
+      passwordInput.dispatchEvent(new Event('input'));
       viewContainerFixture.detectChanges();
 
       viewContainerFixture.whenStable().then(() => {
         viewContainerFixture.detectChanges();
-        const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]');
-        const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]');
 
-        expect((nameInput as HTMLInputElement).value).toEqual('AB');
-        expect((passwordInput as HTMLInputElement).value).toEqual('12345678');
+        expect(nameInput.value).toEqual('AB');
+        expect(passwordInput.value).toEqual('12345678');
         expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
   });
 
-  it('should enable the login button when a valid username and password are entered', fakeAsync(() => {
-    (overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement).value = 'ABC';
-    (overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement).value = '12345678';
+  it('should enable the login button when a valid username and password are entered', async(() => {
+    const loginBtn = overlayContainerElement.querySelector('button[md-raised-button]') as HTMLButtonElement;
+    const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
+    const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+    nameInput.value = 'ABC';
+    nameInput.dispatchEvent(new Event('input'));
+    passwordInput.value = '12345678';
+    passwordInput.dispatchEvent(new Event('input'));
     viewContainerFixture.detectChanges();
-    tick();
 
-    viewContainerFixture.detectChanges();
-    const loginBtn = overlayContainerElement.querySelector('button[md-raised-button]');
-    const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]');
-    const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]');
-    console.log('Login Button is:', loginBtn.textContent);
-    console.log('Login Button is:', loginBtn.getAttribute('ng-reflect-disabled'));
-
-    expect((nameInput as HTMLInputElement).value).toEqual('ABC');
-    expect((passwordInput as HTMLInputElement).value).toEqual('12345678');
-    expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('false');
+    viewContainerFixture.whenStable().then(() => {
+      viewContainerFixture.detectChanges();
+      expect(nameInput.value).toEqual('ABC');
+      expect(passwordInput.value).toEqual('12345678');
+      expect(loginBtn.getAttribute('ng-reflect-disabled')).toBe('false', 'Login button disabled should now be false');
+    });
   }));
 });
 
