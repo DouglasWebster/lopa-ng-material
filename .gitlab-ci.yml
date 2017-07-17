@@ -1,4 +1,3 @@
-
 before_script:
   - npm install
 
@@ -16,6 +15,8 @@ test_job:
   stage: test
   tags:
     - linux
-    - docker
+    - angular
+    - angular material 2
   script:
-    - ng test --sr --cc
+    - ng test --no-progress --sr --cc
+    - ./node_modules/.bin/codecov
