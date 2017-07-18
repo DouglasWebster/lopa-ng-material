@@ -21,3 +21,15 @@ test_job:
   artifacts:
     paths:
       - coverage/
+pages:
+  stage: deploy
+  dependencies:
+    - test_job
+  script:
+    - mv coverage/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - develop
