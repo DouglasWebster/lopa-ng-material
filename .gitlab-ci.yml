@@ -18,3 +18,5 @@ test_job:
     - docker
   script:
     - ng test --no-progress --sr --cc
+  artifacts:
+    - coverage/
