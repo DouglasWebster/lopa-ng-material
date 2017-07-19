@@ -31,7 +31,7 @@ export class LoginDialogComponent implements OnInit {
     })
   }
 
-  private isValid() {
+  public isValid() {
     console.log('login button pressed');
 
     this.authenticationService.login('', '')
