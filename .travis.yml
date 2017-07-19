@@ -14,7 +14,8 @@ before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - sleep 3
-  - npm install -g npm@4.6.1
+  - npm install -g npm@5
+  - npm install -g greenkeeper-lockfile@1
   - npm -v
   - npm install -g @angular/cli
 
@@ -28,8 +29,9 @@ branches:
     - /^hotfix/.*$/
     - codecovTest
 
-before_script:
-
+before_script: greenkeeper-lockfile-update
+after_script: greenkeeper-lockfile-upload
+  
 script:
   - ng lint --type-check
   - ng test --no-progress -sr -cc
