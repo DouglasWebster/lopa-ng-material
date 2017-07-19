@@ -1,15 +1,5 @@
 before_script:
 
-tslint_job:
-  image: trion/ng-cli
-  stage: test
-  tags:
-    - linux
-    - docker
-  script:
-    - npm install
-    - ng lint --type-check true
-
 test_job:
   image: trion/ng-cli-karma
   stage: test
@@ -18,6 +8,7 @@ test_job:
     - docker
   script:
     - npm install
+    - ng lint --type-check true
     - ng test --no-progress --sr --cc
   artifacts:
     paths:
