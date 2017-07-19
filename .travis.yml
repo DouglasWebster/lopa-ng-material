@@ -29,9 +29,11 @@ branches:
     - /^hotfix/.*$/
     - codecovTest
 
-before_script: greenkeeper-lockfile-update
-after_script: greenkeeper-lockfile-upload
-  
+before_script: 
+  - greenkeeper-lockfile-update
+after_script: 
+  - greenkeeper-lockfile-upload
+
 script:
   - ng lint --type-check
   - ng test --no-progress -sr -cc
