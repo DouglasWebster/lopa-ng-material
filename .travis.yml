@@ -5,17 +5,17 @@ node_js:
 dist: trusty
 sudo: false
 
-addons:
-  apt:
-    packages:
-      - google-chrome-stable
+# addons:
+#   apt:
+#     packages:
+#       - google-chrome-stable
 
 before_install:
-#  - export DISPLAY=:99.0
-#  - sh -e /etc/init.d/xvfb start
-#  - sleep 3
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sleep 3
   - npm install -g npm@5
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost & 
+#  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost & 
   - npm install -g greenkeeper-lockfile@1
   - npm -v
   - npm install -g @angular/cli
