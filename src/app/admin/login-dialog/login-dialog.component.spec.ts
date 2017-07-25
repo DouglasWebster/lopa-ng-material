@@ -61,13 +61,13 @@ describe('Login Dialog Component', () => {
   // fake the Authentification service
   const fakeUser =
     '{"firstName":"Micky","lastName":"Mouse","userName":"mMouse", "password":"Password1","admin":true,"id":1}'
-    + ', {"firstName": "Donald", "lastName": "Duck", "userName": "dDuck", "password": "Password2", "admin": false, "id": 2}'
+    + ', {"firstName": "Donald", "lastName": "Duck", "userName": "dDuck", "password": "Password2", "admin": false, "id": 2}';
 
   const authenticationServiceStub = {
     isValid(username?: string, password?: string): Observable<String> {
       return new Observable<String>((subscriber: Subscriber<String>) => subscriber.next(JSON.parse(fakeUser)));
     }
-  }
+  };
 
   let dialog: MdDialog;
   let dialogRef: MdDialogRef<LoginDialogComponent>;
@@ -144,7 +144,7 @@ describe('Login Dialog Component', () => {
       const btn = overlayContainerElement.querySelector('button[md-raised-button]');
       expect(btn.getAttribute('ng-reflect-disabled')).toBe('true');
 
-      dialogRef.close()
+      dialogRef.close();
       tick(500);
       viewContainerFixture.detectChanges();
     }));
