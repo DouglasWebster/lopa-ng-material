@@ -14,6 +14,14 @@
       "name": "Launch Chrome with ng test",
       "url": "http://localhost:9876/debug.html",
       "webRoot": "${workspaceRoot}"
-    }
+    },
+    {
+      "name": "Launch ng e2e",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/protractor/bin/protractor",
+      "protocol": "inspector",
+      "args": ["${workspaceRoot}/protractor.conf.js"]
+    }  
   ]
 }
