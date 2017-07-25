@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MdDialog, MdDialogRef } from '@angular/material';
 
-import { AuthenticationService, AlertService } from '../../shared/services'
+import { AuthenticationService, AlertService } from '../../shared/services';
 
 @Component({
   selector: 'lpa-login-dialog',
@@ -18,7 +18,7 @@ export class LoginDialogComponent implements OnInit {
     private fb: FormBuilder,
     private dlgRef: MdDialogRef<LoginDialogComponent>
   ) {
-    this.createForm()
+    this.createForm();
   }
 
   ngOnInit() {
@@ -28,7 +28,7 @@ export class LoginDialogComponent implements OnInit {
     this.loginForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(8)]]
-    })
+    });
   }
 
   public isValid() {

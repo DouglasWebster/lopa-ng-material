@@ -31,7 +31,7 @@ export class RegisterDialogComponent implements OnInit {
       lastName: ['', Validators.required],
       userName: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(8)]]
-    })
+    });
   }
 
   public register() {
@@ -60,7 +60,7 @@ export class RegisterDialogComponent implements OnInit {
       lastName: formModel.lastName,
       userName: formModel.userName,
       password: formModel.password
-    }
+    };
 
   }
 

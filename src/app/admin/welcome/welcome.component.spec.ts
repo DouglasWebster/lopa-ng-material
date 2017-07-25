@@ -15,13 +15,13 @@ describe('WelcomeComponent', () => {
   let fixture: ComponentFixture<WelcomeComponent>;
   const fakeUsers = '[{"firstName":"Micky","lastName":"Mouse","userName":"mMouse",'
     + '"password":"Password1","admin":true,"id":1},{"firstName":"Daffy","lastName":"Duck",'
-    + '"userName":"dDuck","password":"Password2","admin":false,"id":2}]'
+    + '"userName":"dDuck","password":"Password2","admin":false,"id":2}]';
 
   const userServiceStub = {
     getAll(): Observable<String[]> {
       return new Observable<String[]>((subscriber: Subscriber<String[]>) => subscriber.next(JSON.parse(fakeUsers)));
     }
-  }
+  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

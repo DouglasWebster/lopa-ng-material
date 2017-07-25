@@ -63,13 +63,13 @@ class DialogTestModule { }
 describe('RegisterDialogComponent', () => {
   // fake the Authentification service
   const fakeUser = '{"firstName":"Micky","lastName":"Mouse","userName":"mMouse",'
-    + '"password":"Password1","admin":true,"id":1}'
+    + '"password":"Password1","admin":true,"id":1}';
 
   const authenticationServiceStub = {
     isValid(username?: string, password?: string): Observable<String> {
       return new Observable<String>((subscriber: Subscriber<String>) => subscriber.next(JSON.parse(fakeUser)));
     }
-  }
+  };
 
   let component: RegisterDialogComponent;
   let dialogRef: MdDialogRef<RegisterDialogComponent>;
@@ -118,7 +118,7 @@ describe('RegisterDialogComponent', () => {
 
     expect(component).toBeTruthy();
 
-    dialogRef.close()
+    dialogRef.close();
     tick(500);
     viewContainerFixture.detectChanges();
 
