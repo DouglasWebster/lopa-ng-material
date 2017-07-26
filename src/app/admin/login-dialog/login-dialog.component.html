@@ -1,6 +1,6 @@
 <h1 class="mdl-dialog-title" style="text-align: center">App Login</h1>
-
-<form [formGroup]="loginForm" (ngSubmit)="isValid()" ngnovalidate>
+<div style="text-align:center; color:#f44336" *ngIf="loginWarning">User Name and/or Password is not recognised</div>
+<form [formGroup]="loginForm" (ngSubmit)="login()" ngnovalidate>
   <div class="mdl-dialog-content">
     <div class="form-group">
       <md-input-container style="width: 100%">
