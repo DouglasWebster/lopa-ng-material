@@ -1,6 +1,7 @@
 import { inject, async, fakeAsync, flushMicrotasks, ComponentFixture, TestBed, tick, } from '@angular/core/testing';
 import { NgModule, Component, Directive, ViewChild, ViewContainerRef, Injector, Inject, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -47,6 +48,7 @@ const TEST_DIRECTIVES = [
     ReactiveFormsModule,
     MaterialModule,
     NoopAnimationsModule
+    NoopAnimationsModule,
   ],
   exports: TEST_DIRECTIVES,
   declarations: TEST_DIRECTIVES,
