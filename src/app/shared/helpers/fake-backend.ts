@@ -17,7 +17,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
 
         // find if any user matches login credentials
         const filteredUsers = users.filter(user => {
-          return user.userName === params.userName && user.password === params.password;
+          return user.userName === params.username && user.password === params.password;
         });
 
         if (filteredUsers.length) {
