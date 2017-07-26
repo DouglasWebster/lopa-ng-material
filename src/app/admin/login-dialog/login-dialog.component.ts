@@ -11,6 +11,7 @@ import { AuthenticationService, AlertService } from '../../shared/services';
 })
 export class LoginDialogComponent implements OnInit {
   loginForm: FormGroup;
+  loginWarning = false;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -31,20 +32,20 @@ export class LoginDialogComponent implements OnInit {
     });
   }
 
-  public isValid() {
+  public login() {
+    this.loginWarning = false;
     console.log('login button pressed');
-
-    this.authenticationService.login('', '')
+    const name2Check = this.loginForm.value.name;
+    const pass2Check = this.loginForm.value.password;
+    this.authenticationService.login(name2Check, pass2Check)
       .subscribe(
       data => {
+        console.log('login valid');
+        this.dlgRef.close(this.loginForm.value.name);
       },
       error => {
-        this.alertService.error(error);
+        console.log('login invalid');
+        this.loginWarning = true;
       });
   }
-
-  public login() {
-    this.dlgRef.close(this.loginForm.value.name);
-  }
-
 }
