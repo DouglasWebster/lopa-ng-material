@@ -1,8 +1,8 @@
-# LopaNgMaterial 
-[![build status](https://travis-ci.org/DouglasWebster/lopa-ng-material.svg?branch=develop
-)](https://travis-ci.org/) 
-[![Greenkeeper badge](https://badges.greenkeeper.io/DouglasWebster/lopa-ng-material.svg)](https://greenkeeper.io/)
-[![codecov](https://codecov.io/gh/DouglasWebster/lopa-ng-material/branch/master/graph/badge.svg)](https://codecov.io/gh/DouglasWebster/lopa-ng-material)
+# LopaNgMaterial  
+
+|Master|Development|NPM Updates|Code Coverage|
+|:---:|:---:|:---:|:---:|
+| [![build status](https://travis-ci.org/DouglasWebster/lopa-ng-material.svg?branch=master)](https://travis-ci.org/)|[![build status](https://travis-ci.org/DouglasWebster/lopa-ng-material.svg?branch=develop)](https://travis-ci.org/)|[![Greenkeeper badge](https://badges.greenkeeper.io/DouglasWebster/lopa-ng-material.svg)](https://greenkeeper.io/)|[![codecov](https://codecov.io/gh/DouglasWebster/lopa-ng-material/branch/master/graph/badge.svg)](https://codecov.io/gh/DouglasWebster/lopa-ng-material)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.1.1.
 
