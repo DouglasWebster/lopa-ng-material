@@ -47,8 +47,8 @@ const TEST_DIRECTIVES = [
     MdDialogModule,
     ReactiveFormsModule,
     MaterialModule,
-    NoopAnimationsModule
     NoopAnimationsModule,
+    CommonModule
   ],
   exports: TEST_DIRECTIVES,
   declarations: TEST_DIRECTIVES,
@@ -237,5 +237,24 @@ describe('Login Dialog Component', () => {
       expect(loginBtn.getAttribute('ng-reflect-disabled')).toBe('false', 'Login button disabled should now be false');
     });
   }));
+
+  it('should notify the user if the login credentials cannot be verified', async(() => {
+    const loginBtn = overlayContainerElement.querySelector('button[md-raised-button]') as HTMLButtonElement;
+    const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
+    const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+    nameInput.value = 'ABC';
+    nameInput.dispatchEvent(new Event('input'));
+    passwordInput.value = '12345678';
+    passwordInput.dispatchEvent(new Event('input'));
+    viewContainerFixture.detectChanges();
+
+    viewContainerFixture.whenStable().then(() => {
+      viewContainerFixture.detectChanges();
+      expect(nameInput.value).toEqual('ABC');
+      expect(passwordInput.value).toEqual('12345678');
+      expect(loginBtn.getAttribute('ng-reflect-disabled')).toBe('false', 'Login button disabled should now be false');
+    });
+  }));
+
 });
 
