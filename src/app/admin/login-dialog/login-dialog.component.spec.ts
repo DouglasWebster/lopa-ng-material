@@ -73,7 +73,7 @@ describe('Login Dialog Component', () => {
 
   let dialog: MdDialog;
   let dialogRef: MdDialogRef<LoginDialogComponent>;
-  // let component: LoginDialogComponent;
+  let component: LoginDialogComponent;
 
   let overlayContainerElement: HTMLElement;
 
@@ -112,20 +112,30 @@ describe('Login Dialog Component', () => {
     viewContainerFixture.detectChanges();
     // testViewContainerRef = viewContainerFixture.componentInstance.childViewContainer;
     dialogRef = dialog.open(LoginDialogComponent);
+    component = dialogRef.componentInstance;
     viewContainerFixture.detectChanges();
+
 
   });
 
   it('should be created', fakeAsync(() => {
     expect(dialogRef.componentInstance instanceof LoginDialogComponent).toBe(true, 'Failed to open');
-    const heading = overlayContainerElement.querySelector('h1');
+    const heading = overlayContainerElement.querySelector('.mdl-dialog-title') as HTMLHeadingElement;
     expect(heading.innerText).toEqual('App Login');
 
-
-    dialogRef.close();
-    tick(500);
-    viewContainerFixture.detectChanges();
+    // dialogRef.close();
+    // tick(500);
+    // viewContainerFixture.detectChanges();
   }));
+
+  it('should not be showing the User not recognised error message', () => {
+
+    expect(component.loginWarning).toBeFalsy('component loginWarning variable set to true');
+
+    const notRecognisedMsg = overlayContainerElement.querySelector('.warn');
+    expect(notRecognisedMsg).toBeNull('Not recognised message showing on dialog');
+
+  });
 
   it('should close and return false when cancel button pressed', async(() => {
     const afterCloseCallback = jasmine.createSpy('afterClose callback');
@@ -242,17 +252,22 @@ describe('Login Dialog Component', () => {
     const loginBtn = overlayContainerElement.querySelector('button[md-raised-button]') as HTMLButtonElement;
     const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
     const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+
+    const warnMsg = overlayContainerElement.querySelector('div[warn]');
+    expect(warnMsg).toBeNull();
+
     nameInput.value = 'ABC';
     nameInput.dispatchEvent(new Event('input'));
     passwordInput.value = '12345678';
     passwordInput.dispatchEvent(new Event('input'));
     viewContainerFixture.detectChanges();
+    loginBtn.click();
 
     viewContainerFixture.whenStable().then(() => {
       viewContainerFixture.detectChanges();
-      expect(nameInput.value).toEqual('ABC');
-      expect(passwordInput.value).toEqual('12345678');
-      expect(loginBtn.getAttribute('ng-reflect-disabled')).toBe('false', 'Login button disabled should now be false');
+      expect(component.loginWarning).toBeFalsy();
+      // expect(passwordInput.value).toEqual('12345678');
+      // expect(loginBtn.getAttribute('ng-reflect-disabled')).toBe('false', 'Login button disabled should now be false');
     });
   }));
 
