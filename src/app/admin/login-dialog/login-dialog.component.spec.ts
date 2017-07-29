@@ -14,7 +14,7 @@ import 'rxjs/add/observable/throw';
 import 'rxjs/add/observable/of';
 import { Subscriber } from 'rxjs/Subscriber';
 
-import { AuthenticationService, AlertService } from '../../shared/services';
+import { AuthenticationService } from '../../shared/services';
 import { LoginDialogComponent } from './login-dialog.component';
 
 // helper classes
@@ -89,9 +89,6 @@ describe('Login Dialog Component', () => {
   let component: LoginDialogComponent;
 
   let overlayContainerElement: HTMLElement;
-
-  // let testViewContainerRef: ViewContainerRef;
-
   let viewContainerFixture: ComponentFixture<DlgTestChildViewContainerComponent>;
 
   beforeEach(async(() => {
@@ -109,8 +106,7 @@ describe('Login Dialog Component', () => {
             return { getContainerElement: () => overlayContainerElement };
           }
         },
-        { provide: AuthenticationService, useValue: authenticationServiceStub },
-        AlertService
+        { provide: AuthenticationService, useValue: authenticationServiceStub }
       ]
     })
       .compileComponents();
@@ -123,12 +119,9 @@ describe('Login Dialog Component', () => {
   beforeEach(() => {
     viewContainerFixture = TestBed.createComponent(DlgTestChildViewContainerComponent);
     viewContainerFixture.detectChanges();
-    // testViewContainerRef = viewContainerFixture.componentInstance.childViewContainer;
     dialogRef = dialog.open(LoginDialogComponent);
     component = dialogRef.componentInstance;
     viewContainerFixture.detectChanges();
-
-
   });
 
   it('should be created', () => {
@@ -137,8 +130,16 @@ describe('Login Dialog Component', () => {
     expect(heading.innerText).toEqual('App Login');
   });
 
-  it('should not be showing the User not recognised error message', () => {
+  it('should open with user and password blank and the login button dissabled', () => {
+    const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
+    const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+    const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+    expect(nameInput.value).toEqual('');
+    expect(passwordInput.value).toEqual('');
+    expect(btn.getAttribute('ng-reflect-disabled')).toBe('true');
+  });
 
+  it('should not be showing the User not recognised error message', () => {
     expect(component.loginWarning).toBeFalsy('component loginWarning variable set to true');
 
     const notRecognisedMsg = overlayContainerElement.querySelector('.warn');
@@ -160,11 +161,6 @@ describe('Login Dialog Component', () => {
   }));
 
   describe('should disable login button', () => {
-    it('without a user and password entry', () => {
-
-      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
-      expect(btn.getAttribute('ng-reflect-disabled')).toBe('true');
-    });
 
     it('with a user entry but without a password entry', async(() => {
       const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
@@ -230,6 +226,24 @@ describe('Login Dialog Component', () => {
 
         expect(nameInput.value).toEqual('AB');
         expect(passwordInput.value).toEqual('12345678');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
+    }));
+
+    it('with an invalid user name and an invalid password', async(() => {
+      const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      nameInput.value = 'AB';
+      nameInput.dispatchEvent(new Event('input'));
+      passwordInput.value = '1234567';
+      passwordInput.dispatchEvent(new Event('input'));
+      viewContainerFixture.detectChanges();
+
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+
+        expect(nameInput.value).toEqual('AB');
+        expect(passwordInput.value).toEqual('1234567');
         expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
