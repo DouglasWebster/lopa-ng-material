@@ -10,6 +10,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule, MdDialogModule, MdDialog, MdDialogRef, MdButton, OverlayContainer } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/throw';
+import 'rxjs/add/observable/of';
 import { Subscriber } from 'rxjs/Subscriber';
 
 import { AuthenticationService, AlertService } from '../../shared/services';
@@ -62,12 +64,23 @@ describe('Login Dialog Component', () => {
 
   // fake the Authentification service
   const fakeUser =
-    '{"firstName":"Micky","lastName":"Mouse","userName":"mMouse", "password":"Password1","admin":true,"id":1}'
-    + ', {"firstName": "Donald", "lastName": "Duck", "userName": "dDuck", "password": "Password2", "admin": false, "id": 2}';
+    '[{"firstName":"Micky","lastName":"Mouse","userName":"mMouse", "password":"Password1","admin":true,"id":1}'
+    + ', {"firstName": "Donald", "lastName": "Duck", "userName": "dDuck", "password": "Password2", "admin": false, "id": 2}]';
 
   const authenticationServiceStub = {
-    isValid(username?: string, password?: string): Observable<String> {
-      return new Observable<String>((subscriber: Subscriber<String>) => subscriber.next(JSON.parse(fakeUser)));
+    login(username?: string, password?: string) {
+      console.log(`Athenticate stub called with ${username} ${password}`);
+
+      const users = JSON.parse(fakeUser);
+      const filteredUsers = users.filter(user => {
+        return user.userName === username && user.password === password;
+      });
+
+      if (filteredUsers.length) {
+        return Observable.of(filteredUsers);
+      } else {
+        return Observable.throw(Error('User Name of Password not recognised'));
+      }
     }
   };
 
@@ -118,15 +131,11 @@ describe('Login Dialog Component', () => {
 
   });
 
-  it('should be created', fakeAsync(() => {
+  it('should be created', () => {
     expect(dialogRef.componentInstance instanceof LoginDialogComponent).toBe(true, 'Failed to open');
     const heading = overlayContainerElement.querySelector('.mdl-dialog-title') as HTMLHeadingElement;
     expect(heading.innerText).toEqual('App Login');
-
-    // dialogRef.close();
-    // tick(500);
-    // viewContainerFixture.detectChanges();
-  }));
+  });
 
   it('should not be showing the User not recognised error message', () => {
 
@@ -151,15 +160,11 @@ describe('Login Dialog Component', () => {
   }));
 
   describe('should disable login button', () => {
-    it('without a user and password entry', fakeAsync(() => {
+    it('without a user and password entry', () => {
 
       const btn = overlayContainerElement.querySelector('button[md-raised-button]');
       expect(btn.getAttribute('ng-reflect-disabled')).toBe('true');
-
-      dialogRef.close();
-      tick(500);
-      viewContainerFixture.detectChanges();
-    }));
+    });
 
     it('with a user entry but without a password entry', async(() => {
       const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
@@ -249,7 +254,6 @@ describe('Login Dialog Component', () => {
   }));
 
   it('should notify the user if the login credentials cannot be verified', async(() => {
-    const loginBtn = overlayContainerElement.querySelector('button[md-raised-button]') as HTMLButtonElement;
     const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
     const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
 
@@ -261,13 +265,38 @@ describe('Login Dialog Component', () => {
     passwordInput.value = '12345678';
     passwordInput.dispatchEvent(new Event('input'));
     viewContainerFixture.detectChanges();
-    loginBtn.click();
+    component.login();
+    viewContainerFixture.detectChanges();
 
     viewContainerFixture.whenStable().then(() => {
       viewContainerFixture.detectChanges();
-      expect(component.loginWarning).toBeFalsy();
+      expect(component.loginWarning).toBeTruthy();
       // expect(passwordInput.value).toEqual('12345678');
       // expect(loginBtn.getAttribute('ng-reflect-disabled')).toBe('false', 'Login button disabled should now be false');
+    });
+  }));
+
+  it('should close the dialog and return the user details when a user is verified', async(() => {
+    const afterCloseCallback = jasmine.createSpy('afterClose callback');
+
+    dialogRef.afterClosed().subscribe(afterCloseCallback);
+    const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
+    const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+
+    const warnMsg = overlayContainerElement.querySelector('div[warn]');
+    expect(warnMsg).toBeNull();
+
+    nameInput.value = 'mMouse';
+    nameInput.dispatchEvent(new Event('input'));
+    passwordInput.value = 'Password1';
+    passwordInput.dispatchEvent(new Event('input'));
+    viewContainerFixture.detectChanges();
+    component.login();
+    viewContainerFixture.detectChanges();
+
+    viewContainerFixture.whenStable().then(() => {
+      expect(overlayContainerElement.querySelector('md-dialog-container')).toBeNull('Dialog box still open');
+      expect(afterCloseCallback).toHaveBeenCalledWith('mMouse');
     });
   }));
 
