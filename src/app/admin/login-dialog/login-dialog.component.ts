@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MdDialog, MdDialogRef } from '@angular/material';
 
-import { AuthenticationService, AlertService } from '../../shared/services';
+import { AuthenticationService} from '../../shared/services';
 
 @Component({
   selector: 'lpa-login-dialog',
@@ -15,7 +15,6 @@ export class LoginDialogComponent implements OnInit {
 
   constructor(
     private authenticationService: AuthenticationService,
-    private alertService: AlertService,
     private fb: FormBuilder,
     private dlgRef: MdDialogRef<LoginDialogComponent>
   ) {
