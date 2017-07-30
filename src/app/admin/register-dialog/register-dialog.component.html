@@ -1,5 +1,5 @@
 <h1 class="mdl-dialog-title" style="text-align: center">Register User</h1>
-<h3 *ngIf="registerFailure">{{registerFailure}}</h3>
+<div class="warn"  *ngIf="registerFailure">{{registerFailure}}</div>
 <form [formGroup]="registerForm" (ngSubmit)="register()" ngnovalidate>
   <div class="mdl-dialog-content">
     <div class="form-group">
