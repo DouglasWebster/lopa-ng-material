@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MdDialog, MdDialogRef } from '@angular/material';
 
-import { AuthenticationService, AlertService, UserService } from '../../shared/services';
+import { AuthenticationService, UserService } from '../../shared/services';
 import { AlertComponent } from '../../shared/directives/alert/alert.component';
+
+import { User } from '../../shared/models/user';
 
 @Component({
   selector: 'lpa-register-dialog',
@@ -12,13 +14,12 @@ import { AlertComponent } from '../../shared/directives/alert/alert.component';
 })
 export class RegisterDialogComponent implements OnInit {
   registerForm: FormGroup;
-  model: any = {};
+  model: User;
   loading = false;
   registerFailure = '';
 
   constructor(
     private userService: UserService,
-    private alertService: AlertService,
     private fb: FormBuilder,
     private dlgRef: MdDialogRef<RegisterDialogComponent>
   ) {
@@ -43,7 +44,7 @@ export class RegisterDialogComponent implements OnInit {
         console.log('register OK');
         // clear the loading message and set the success flag
         this.loading = false;
-        this.dlgRef.close(true);
+        this.dlgRef.close(this.model.userName);
       },
       error => {
         console.log('Register Failed: ', error);
