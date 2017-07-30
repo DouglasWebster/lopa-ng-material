@@ -313,9 +313,6 @@ describe('Login Dialog Component', () => {
     const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
     const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
 
-    const warnMsg = overlayContainerElement.querySelector('div[warn]');
-    expect(warnMsg).toBeNull();
-
     nameInput.value = 'mMouse';
     nameInput.dispatchEvent(new Event('input'));
     passwordInput.value = 'Password1';
