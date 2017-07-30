@@ -147,6 +147,20 @@ describe('Login Dialog Component', () => {
 
   });
 
+  it('should show the User not recognised error message when \'logingWarning\' set', () => {
+    expect(component.loginWarning).toBeFalsy('component loginWarning variable set to true');
+
+    let notRecognisedMsg = overlayContainerElement.querySelector('.warn') as HTMLTextAreaElement;
+    component.loginWarning = true;
+    viewContainerFixture.detectChanges();
+
+    viewContainerFixture.whenStable().then(() => {
+      notRecognisedMsg = overlayContainerElement.querySelector('.warn') as HTMLTextAreaElement;
+      expect(notRecognisedMsg.innerText).toContain('User Name and', 'Not recognised message is not showing on dialog');
+    });
+
+  });
+
   it('should close and return false when cancel button pressed', async(() => {
     const afterCloseCallback = jasmine.createSpy('afterClose callback');
 
@@ -271,8 +285,9 @@ describe('Login Dialog Component', () => {
     const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
     const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
 
-    const warnMsg = overlayContainerElement.querySelector('div[warn]');
-    expect(warnMsg).toBeNull();
+    let warnMsg = overlayContainerElement.querySelector('.warn') as HTMLTextAreaElement;
+    expect(warnMsg).toBeNull('warning message showing when should\'nt be');
+    expect(component.loginWarning).toBeFalsy();
 
     nameInput.value = 'ABC';
     nameInput.dispatchEvent(new Event('input'));
@@ -285,8 +300,9 @@ describe('Login Dialog Component', () => {
     viewContainerFixture.whenStable().then(() => {
       viewContainerFixture.detectChanges();
       expect(component.loginWarning).toBeTruthy();
-      // expect(passwordInput.value).toEqual('12345678');
-      // expect(loginBtn.getAttribute('ng-reflect-disabled')).toBe('false', 'Login button disabled should now be false');
+      warnMsg = overlayContainerElement.querySelector('.warn') as HTMLTextAreaElement;
+      expect(warnMsg.innerText).toContain('User Name and/or ', 'warning message should be visible');
+
     });
   }));
 
