@@ -1,20 +1,22 @@
-import { NgModule, Component, Directive, ViewChild, ViewContainerRef, Injector, Inject, } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { inject, async, fakeAsync, flushMicrotasks, ComponentFixture, TestBed, tick, } from '@angular/core/testing';
+import { NgModule, Component, Directive, ViewChild, ViewContainerRef, Injector, Inject, DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { HttpModule } from '@angular/http/';
 
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MaterialModule, MdDialogModule } from '@angular/material';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MaterialModule, MdDialogModule, MdDialog, MdDialogRef, MdButton, OverlayContainer } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/throw';
+import 'rxjs/add/observable/of';
 import { Subscriber } from 'rxjs/Subscriber';
 
-import { AuthenticationService, AlertService, UserService } from '../../shared/services';
+import { UserService } from '../../shared/services';
 import { RegisterDialogComponent } from './register-dialog.component';
+import { User } from '../../shared/models/user';
 
 // helper classes
 // tslint:disable-next-line:directive-selector
@@ -45,12 +47,11 @@ const TEST_DIRECTIVES = [
 
 @NgModule({
   imports: [
-    CommonModule,
-    HttpModule,
     MdDialogModule,
     ReactiveFormsModule,
     MaterialModule,
-    NoopAnimationsModule
+    NoopAnimationsModule,
+    CommonModule
   ],
   exports: TEST_DIRECTIVES,
   declarations: TEST_DIRECTIVES,
@@ -61,27 +62,36 @@ const TEST_DIRECTIVES = [
 class DialogTestModule { }
 
 describe('RegisterDialogComponent', () => {
-  // fake the Authentification service
-  const fakeUser = '{"firstName":"Micky","lastName":"Mouse","userName":"mMouse",'
-    + '"password":"Password1","admin":true,"id":1}';
 
-  const authenticationServiceStub = {
-    isValid(username?: string, password?: string): Observable<String> {
-      return new Observable<String>((subscriber: Subscriber<String>) => subscriber.next(JSON.parse(fakeUser)));
+  // fake the User service
+  const fakeUser =
+    '[{"firstName":"Micky","lastName":"Mouse","userName":"mMouse", "password":"Password1","admin":true,"id":1}]';
+
+  const userServiceStub = {
+    create(user: User) {
+      console.log(`UserService stub called with ${user}`);
+
+      const username = user.userName;
+      const users = JSON.parse(fakeUser);
+      const filteredUsers = users.filter(chkUser => {
+        return chkUser.userName === username;
+      });
+
+      if (filteredUsers.length) {
+        return Observable.throw(Error(`Username "${username}" is already taken`));
+      } else {
+        return Observable.of(filteredUsers);
+      }
     }
+
   };
 
-  let component: RegisterDialogComponent;
-  let dialogRef: MdDialogRef<RegisterDialogComponent>;
   let dialog: MdDialog;
-  // tslint:disable-next-line:prefer-const
+  let dialogRef: MdDialogRef<RegisterDialogComponent>;
+  let component: RegisterDialogComponent;
+
   let overlayContainerElement: HTMLElement;
-
-  // tslint:disable-next-line:prefer-const
-  let testViewContainerRef: ViewContainerRef;
-  // tslint:disable-next-line:prefer-const
   let viewContainerFixture: ComponentFixture<DlgTestChildViewContainerComponent>;
-
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -92,9 +102,13 @@ describe('RegisterDialogComponent', () => {
       declarations: [
       ],
       providers: [
-        { provide: AuthenticationService, useValue: authenticationServiceStub },
-        AlertService,
-        UserService
+        {
+          provide: OverlayContainer, useFactory: () => {
+            overlayContainerElement = document.createElement('div');
+            return { getContainerElement: () => overlayContainerElement };
+          }
+        },
+        { provide: UserService, useValue: userServiceStub }
       ]
     })
       .compileComponents();
@@ -107,43 +121,324 @@ describe('RegisterDialogComponent', () => {
   beforeEach(() => {
     viewContainerFixture = TestBed.createComponent(DlgTestChildViewContainerComponent);
     viewContainerFixture.detectChanges();
-    testViewContainerRef = viewContainerFixture.componentInstance.childViewContainer;
+    dialogRef = dialog.open(RegisterDialogComponent);
+    component = dialogRef.componentInstance;
+    viewContainerFixture.detectChanges();
   });
 
-  it('should be created', fakeAsync(() => {
-    dialogRef = dialog.open(RegisterDialogComponent);
+  it('should be created', () => {
+    expect(dialogRef.componentInstance instanceof RegisterDialogComponent).toBe(true, 'Failed to open');
+    const heading = overlayContainerElement.querySelector('.mdl-dialog-title') as HTMLHeadingElement;
+    expect(heading.innerText).toEqual('Register User');
+  });
 
+  it('should not be showing an error message', () => {
+    expect(component.registerFailure).toBe('', 'component registerFailure string should be empty');
+
+    const failuerMsg = overlayContainerElement.querySelector('.warn');
+    expect(failuerMsg).toBeNull('Failure message showing on dialog');
+  });
+
+  it('should open with all fields blank and the login button dissabled', () => {
+    const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+    const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+    const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+    const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+    const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+    expect(firstNameInput.value).toBe('', 'First name field not blank');
+    expect(lastNameInput.value).toBe('', 'Last name field not blank');
+    expect(userNameInput.value).toBe('', 'User name field not blank');
+    expect(passwordInput.value).toBe('', 'Password field not blank');
+    expect(btn.getAttribute('ng-reflect-disabled')).toBe('true', 'Login button enabled');
+  });
+
+  it('should close and return false when cancel button pressed', async(() => {
+    const afterCloseCallback = jasmine.createSpy('afterClose callback');
+
+    dialogRef.afterClosed().subscribe(afterCloseCallback);
+    (overlayContainerElement.querySelector('button[md-dialog-close="false"]') as HTMLElement).click();
     viewContainerFixture.detectChanges();
-    component = dialogRef.componentInstance;
 
-    expect(component).toBeTruthy();
-
-    dialogRef.close();
-    tick(500);
-    viewContainerFixture.detectChanges();
-
-  }));
-
-    it('should return false when cancel button pressed', fakeAsync(() => {
-    let result = true;
-    dialogRef = dialog.open(RegisterDialogComponent);
-
-    viewContainerFixture.detectChanges();
-    component = dialogRef.componentInstance;
-
-    dialogRef.afterClosed().subscribe(dlgResult => {
-      console.log('dialog result: ', dlgResult);
-      result = dlgResult;
-      console.log('result in subscribe:', result);
+    viewContainerFixture.whenStable().then(() => {
+      expect(overlayContainerElement.querySelector('md-dialog-container')).toBeNull('Dialog box still open');
+      expect(afterCloseCallback).toHaveBeenCalledWith('false');
     });
-
-    dialogRef.close(false);
-
-    tick(500);
-    viewContainerFixture.detectChanges();
-
-    console.log('result after subscribe:', result);
-    expect(result).toBeFalsy();
   }));
 
+  describe('should disable register button', () => {
+
+    it('with a first name entry but without any other entry', async(() => {
+      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+      const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+      const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      firstNameInput.value = 'AB';
+      firstNameInput.dispatchEvent(new Event('input'));
+      viewContainerFixture.detectChanges();
+
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+
+        expect(firstNameInput.value).toBe('AB', 'First Name changed on refresh');
+        expect(lastNameInput.value).toBe('', 'Last Name changed on refresh');
+        expect(userNameInput.value).toBe('', 'User Name changed on refresh');
+        expect(passwordInput.value).toBe('', 'Password changed on refresh');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
+    }));
+
+    it('with a last name entry but without any other entry', async(() => {
+      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+      const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+      const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      lastNameInput.value = 'CD';
+      lastNameInput.dispatchEvent(new Event('input'));
+      viewContainerFixture.detectChanges();
+
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+
+        expect(firstNameInput.value).toBe('', 'First Name changed on refresh');
+        expect(lastNameInput.value).toBe('CD', 'Last Name changed on refresh');
+        expect(userNameInput.value).toBe('', 'User Name changed on refresh');
+        expect(passwordInput.value).toBe('', 'Password changed on refresh');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
+    }));
+
+    it('with a user name entry but without any other entry', async(() => {
+      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+      const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+      const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      userNameInput.value = 'EF';
+      userNameInput.dispatchEvent(new Event('input'));
+      viewContainerFixture.detectChanges();
+
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+
+        expect(firstNameInput.value).toBe('', 'First Name changed on refresh');
+        expect(lastNameInput.value).toBe('', 'Last Name changed on refresh');
+        expect(userNameInput.value).toBe('EF', 'User Name changed on refresh');
+        expect(passwordInput.value).toBe('', 'Password changed on refresh');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
+    }));
+
+    it('with a password entry but without any other entry', async(() => {
+      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+      const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+      const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      passwordInput.value = '123';
+      passwordInput.dispatchEvent(new Event('input'));
+      viewContainerFixture.detectChanges();
+
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+
+        expect(firstNameInput.value).toBe('', 'First Name changed on refresh');
+        expect(lastNameInput.value).toBe('', 'Last Name changed on refresh');
+        expect(userNameInput.value).toBe('', 'User Name changed on refresh');
+        expect(passwordInput.value).toBe('123', 'Password changed on refresh');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
+    }));
+
+    it('with a valid first name entry but with other entries invalid', async(() => {
+      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+      const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+      const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      firstNameInput.value = 'AB';
+      firstNameInput.dispatchEvent(new Event('input'));
+      lastNameInput.value = '';
+      lastNameInput.dispatchEvent(new Event('input'));
+      userNameInput.value = 'EF';
+      userNameInput.dispatchEvent(new Event('input'));
+      passwordInput.value = '1234567';
+      passwordInput.dispatchEvent(new Event('input'));
+      viewContainerFixture.detectChanges();
+
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+
+        expect(firstNameInput.value).toBe('AB', 'First Name changed on refresh');
+        expect(lastNameInput.value).toBe('', 'Last Name changed on refresh');
+        expect(userNameInput.value).toBe('EF', 'User Name changed on refresh');
+        expect(passwordInput.value).toBe('1234567', 'Password changed on refresh');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
+    }));
+
+    it('with a valid first name and last name entry but with other entries invalid', async(() => {
+      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+      const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+      const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      firstNameInput.value = 'AB';
+      firstNameInput.dispatchEvent(new Event('input'));
+      lastNameInput.value = 'CD';
+      lastNameInput.dispatchEvent(new Event('input'));
+      userNameInput.value = 'EF';
+      userNameInput.dispatchEvent(new Event('input'));
+      passwordInput.value = '1234567';
+      passwordInput.dispatchEvent(new Event('input'));
+      viewContainerFixture.detectChanges();
+
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+
+        expect(firstNameInput.value).toBe('AB', 'First Name changed on refresh');
+        expect(lastNameInput.value).toBe('CD', 'Last Name changed on refresh');
+        expect(userNameInput.value).toBe('EF', 'User Name changed on refresh');
+        expect(passwordInput.value).toBe('1234567', 'Password changed on refresh');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
+    }));
+
+    it('with valid entries except for the password entry', async(() => {
+      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+      const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+      const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      firstNameInput.value = 'AB';
+      firstNameInput.dispatchEvent(new Event('input'));
+      lastNameInput.value = 'CD';
+      lastNameInput.dispatchEvent(new Event('input'));
+      userNameInput.value = 'EFG';
+      userNameInput.dispatchEvent(new Event('input'));
+      passwordInput.value = '1234567';
+      passwordInput.dispatchEvent(new Event('input'));
+      viewContainerFixture.detectChanges();
+
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+
+        expect(firstNameInput.value).toBe('AB', 'First Name changed on refresh');
+        expect(lastNameInput.value).toBe('CD', 'Last Name changed on refresh');
+        expect(userNameInput.value).toBe('EFG', 'User Name changed on refresh');
+        expect(passwordInput.value).toBe('1234567', 'Password changed on refresh');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
+    }));
+
+    it('with valid entries except for the username entry', async(() => {
+      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+      const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+      const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+      const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+      firstNameInput.value = 'AB';
+      firstNameInput.dispatchEvent(new Event('input'));
+      lastNameInput.value = 'CD';
+      lastNameInput.dispatchEvent(new Event('input'));
+      userNameInput.value = 'EF';
+      userNameInput.dispatchEvent(new Event('input'));
+      passwordInput.value = '12345678';
+      passwordInput.dispatchEvent(new Event('input'));
+      viewContainerFixture.detectChanges();
+
+      viewContainerFixture.whenStable().then(() => {
+        viewContainerFixture.detectChanges();
+
+        expect(firstNameInput.value).toBe('AB', 'First Name changed on refresh');
+        expect(lastNameInput.value).toBe('CD', 'Last Name changed on refresh');
+        expect(userNameInput.value).toBe('EF', 'User Name changed on refresh');
+        expect(passwordInput.value).toBe('12345678', 'Password changed on refresh');
+        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+      });
+    }));
+  });
+  it('should enable the register button when all entries are valid', async(() => {
+    const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+    const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+    const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+    const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+    const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+    firstNameInput.value = 'AB';
+    firstNameInput.dispatchEvent(new Event('input'));
+    lastNameInput.value = 'CD';
+    lastNameInput.dispatchEvent(new Event('input'));
+    userNameInput.value = 'EFg';
+    userNameInput.dispatchEvent(new Event('input'));
+    passwordInput.value = '12345678';
+    passwordInput.dispatchEvent(new Event('input'));
+    viewContainerFixture.detectChanges();
+
+    viewContainerFixture.whenStable().then(() => {
+      viewContainerFixture.detectChanges();
+
+      expect(firstNameInput.value).toBe('AB', 'First Name changed on refresh');
+      expect(lastNameInput.value).toBe('CD', 'Last Name changed on refresh');
+      expect(userNameInput.value).toBe('EFg', 'User Name changed on refresh');
+      expect(passwordInput.value).toBe('12345678', 'Password changed on refresh');
+      expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('false');
+    });
+  }));
+
+  it('should notify the user if the register action fails', async(() => {
+    const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+    const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+    const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+    const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+
+    let warnMsg = overlayContainerElement.querySelector('.warn') as HTMLTextAreaElement;
+    expect(warnMsg).toBeNull();
+
+    firstNameInput.value = 'Mickey';
+    firstNameInput.dispatchEvent(new Event('input'));
+    lastNameInput.value = 'Mouse';
+    lastNameInput.dispatchEvent(new Event('input'));
+    userNameInput.value = 'mMouse';
+    userNameInput.dispatchEvent(new Event('input'));
+    passwordInput.value = 'Password1';
+    passwordInput.dispatchEvent(new Event('input'));
+    viewContainerFixture.detectChanges();
+    component.register();
+    viewContainerFixture.detectChanges();
+
+    viewContainerFixture.whenStable().then(() => {
+      viewContainerFixture.detectChanges();
+      expect(component.registerFailure).toBeTruthy();
+      warnMsg = overlayContainerElement.querySelector('.warn') as HTMLTextAreaElement;
+      expect(warnMsg.innerText).toContain(userNameInput.value);
+    });
+  }));
+
+  it('should close the dialog and return the userName when a user is created', async(() => {
+    const afterCloseCallback = jasmine.createSpy('afterClose callback');
+    dialogRef.afterClosed().subscribe(afterCloseCallback);
+
+    const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
+    const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
+    const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
+    const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
+
+    firstNameInput.value = 'Daffy';
+    firstNameInput.dispatchEvent(new Event('input'));
+    lastNameInput.value = 'Duck';
+    lastNameInput.dispatchEvent(new Event('input'));
+    userNameInput.value = 'dDuck';
+    userNameInput.dispatchEvent(new Event('input'));
+    passwordInput.value = 'Password2';
+    passwordInput.dispatchEvent(new Event('input'));
+    viewContainerFixture.detectChanges();
+    component.register();
+    viewContainerFixture.detectChanges();
+
+    viewContainerFixture.whenStable().then(() => {
+      expect(overlayContainerElement.querySelector('md-dialog-container')).toBeNull('Dialog box still open');
+      expect(afterCloseCallback).toHaveBeenCalledWith(userNameInput.value);
+    });
+  }));
 });
