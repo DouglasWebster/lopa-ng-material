@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MdDialog, MdDialogRef } from '@angular/material';
 
 import { AuthenticationService, UserService } from '../../shared/services';
-import { AlertComponent } from '../../shared/directives/alert/alert.component';
 
 import { User } from '../../shared/models/user';
 
