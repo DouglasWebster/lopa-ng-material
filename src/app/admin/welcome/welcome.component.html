@@ -11,12 +11,12 @@
         <p>You are logged into the LOPA APP</p>
         <p>
           <a [routerLink]="['/dashboard/home']" md-raised-button color="primary">Enter</a>
-          <a [routerLink]="['/login']" md-raised-button>Logout</a>
+          <button md-raised-button color="warning" (click)="doLogout()" >Logout</button>
           <a *ngIf="currentUser.admin" [routerLink]="['/register']" md-raised-button>Administration</a>
         </p>
       </div>
       <div *ngIf="!currentUser">
-        <p>Please login to the LOPA APP</p>
+        <p>Please login or register</p>
         <p>
           <button md-raised-button color="primary" (click)="doLogin()">Login</button>
           <button md-raised-button color="accent" (click)="doNewUser()">Register</button>
@@ -25,5 +25,4 @@
     </div>
   </md-card>
 
-  <!--<app-login-alert></app-login-alert>-->
 </div>
