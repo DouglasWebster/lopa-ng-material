@@ -84,7 +84,7 @@ describe('UserService', () => {
       );
     })));
 
-    xit('should return null if trying to update a user', async(inject([UserService], (service: UserService) => {
+    it('should return null if trying to update a user', async(inject([UserService], (service: UserService) => {
       const user: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', 'id': 1};
 
     service.update(user).subscribe(
