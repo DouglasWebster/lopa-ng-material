@@ -11,7 +11,7 @@ import { MockBackend, MockConnection } from '@angular/http/testing';
 import { BaseRequestOptions } from '@angular/http';
 
 // Network services
-import { AlertService, AuthenticationService, UserService } from './shared/services';
+import { AuthenticationService, UserService } from './shared/services';
 import { LoginGuard } from './shared/guards/login.guard';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -31,7 +31,6 @@ import { AppComponent } from './app.component';
     AppRoutingModule
   ],
   providers: [
-    AlertService,
     AuthenticationService,
     UserService,
     LoginGuard,
