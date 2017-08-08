@@ -89,7 +89,7 @@ describe('UserService', () => {
 
     service.update(user).subscribe(
       data => {
-
+        expect(data).toBeNull();
       },
       error => {
         fail('unable to update user details');
