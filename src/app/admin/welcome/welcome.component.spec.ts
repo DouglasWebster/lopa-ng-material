@@ -7,6 +7,7 @@ import { Subscriber} from 'rxjs/Subscriber';
 
 import { User } from '../../shared/models';
 import { UserService } from '../../shared/services';
+import { AuthenticationService } from '../../shared/services';
 
 import { WelcomeComponent } from './welcome.component';
 
@@ -22,6 +23,28 @@ describe('WelcomeComponent', () => {
       return new Observable<String[]>((subscriber: Subscriber<String[]>) => subscriber.next(JSON.parse(fakeUsers)));
     }
   };
+  // fake the Authentification service
+
+  const authenticationServiceStub = {
+    login(username?: string, password?: string) {
+      console.log(`Athenticate stub called with ${username} ${password}`);
+
+      const users = JSON.parse(fakeUsers);
+      const filteredUsers = users.filter(user => {
+        return user.userName === username && user.password === password;
+      });
+
+      if (filteredUsers.length) {
+        return Observable.of(filteredUsers);
+      } else {
+        return Observable.throw(Error('User Name of Password not recognised'));
+      }
+    },
+
+    logOut() {
+          localStorage.removeItem('currentUser');
+    }
+  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -31,7 +54,8 @@ describe('WelcomeComponent', () => {
       ],
       declarations: [WelcomeComponent],
       providers: [
-        { provide: UserService, useValue: userServiceStub }
+        { provide: UserService, useValue: userServiceStub },
+        { provide: AuthenticationService, useValue: authenticationServiceStub }
       ]
     })
       .compileComponents();
