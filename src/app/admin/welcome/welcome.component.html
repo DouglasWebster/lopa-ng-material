@@ -10,9 +10,9 @@
       <div *ngIf="currentUser">
         <p>You are logged into the LOPA APP</p>
         <p>
-          <a [routerLink]="['/dashboard/home']" md-raised-button color="primary">Enter</a>
+          <button md-raised-button color="primary" (click)="doHOme()">Enter</button>
           <button md-raised-button color="warning" (click)="doLogout()" >Logout</button>
-          <a *ngIf="currentUser.admin" [routerLink]="['/register']" md-raised-button>Administration</a>
+          <button *ngIf="currentUser.admin"  md-raised-button color="accent" (click)="doAdmin()" >Administration</button>
         </p>
       </div>
       <div *ngIf="!currentUser">

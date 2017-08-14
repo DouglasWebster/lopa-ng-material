@@ -4,7 +4,6 @@ import { MdDialog, MdDialogRef } from '@angular/material';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from '../register-dialog/register-dialog.component';
 import { User } from '../../shared/models';
-import { UserService } from '../../shared/services';
 import { AuthenticationService } from '../../shared/services';
 
 @Component({
@@ -17,22 +16,15 @@ export class WelcomeComponent implements OnInit {
   users: User[] = [];
 
   constructor(
-    private userService: UserService,
     private authenicationService: AuthenticationService,
     private loginDlg: MdDialog,
-    private registerDlg: MdDialog,
-    private newUserDlb: MdDialog) {
-    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    console.log(`current user:`, this.currentUser);
+    private registerDlg: MdDialog) {
   }
 
   ngOnInit() {
-    this.loadAllUsers();
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
   }
 
-  private loadAllUsers() {
-    this.userService.getAll().subscribe(users => { this.users = users; });
-  }
 
   public doLogin() {
     const loginDlgRef = this.loginDlg.open(LoginDialogComponent, { width: '450px' });
@@ -53,4 +45,8 @@ export class WelcomeComponent implements OnInit {
     this.authenicationService.logout();
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
   }
+
+  public doHome() {}
+
+  public doAdmin() {}
 }
