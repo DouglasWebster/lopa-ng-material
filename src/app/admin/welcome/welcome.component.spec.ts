@@ -49,7 +49,7 @@ describe('WelcomeComponent', () => {
 
   // mocking a dialogRef for when we open our Md dialog with a button
   const dlgContainer = new MdDialogContainer(null, null, null, null);
-  let mockDialogRef = new MdDialogRef(new OverlayRef(null, null, null, null, null), dlgContainer);
+  const mockDialogRef = new MdDialogRef(new OverlayRef(null, null, null, null, null), dlgContainer);
   mockDialogRef.componentInstance = new LoginDialogComponent(null, null, null);
 
   beforeEach(async(() => {

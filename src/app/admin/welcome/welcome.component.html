@@ -10,7 +10,7 @@
       <div *ngIf="currentUser">
         <p>You are logged into the LOPA APP</p>
         <p>
-          <button md-raised-button color="primary" (click)="doHOme()">Enter</button>
+          <button md-raised-button color="primary" (click)="doHome()">Enter</button>
           <button md-raised-button color="warning" (click)="doLogout()" >Logout</button>
           <button *ngIf="currentUser.admin"  md-raised-button color="accent" (click)="doAdmin()" >Administration</button>
         </p>
