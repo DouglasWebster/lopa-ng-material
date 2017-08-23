@@ -14,7 +14,6 @@ import { User } from '../../shared/models';
 import { AuthenticationService } from '../../shared/services';
 
 import { WelcomeComponent } from './welcome.component';
-import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 
 describe('WelcomeComponent', () => {
   let component: WelcomeComponent;
@@ -47,11 +46,6 @@ describe('WelcomeComponent', () => {
     }
   };
 
-  // mocking a dialogRef for when we open our Md dialog with a button
-  const dlgContainer = new MdDialogContainer(null, null, null, null);
-  const mockDialogRef = new MdDialogRef(new OverlayRef(null, null, null, null, null), dlgContainer);
-  mockDialogRef.componentInstance = new LoginDialogComponent(null, null, null);
-
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -61,12 +55,9 @@ describe('WelcomeComponent', () => {
       ],
       declarations: [
         WelcomeComponent
-        // ,
-        //  LoginDialogComponent
       ],
       providers: [
         MdDialog,
-        // { provide: UserService, useValue: userServiceStub },
         { provide: AuthenticationService, useValue: authenticationServiceStub }
       ]
     })
