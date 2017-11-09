@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MaterialModule, MdDialogModule } from '@angular/material';
+// import { MaterialModule, MdDialogModule } from '@angular/material';
 import { ReactiveFormsModule } from '@angular/forms';
 
 // Network services
@@ -12,14 +12,14 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { LoginDialogComponent } from './login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from './register-dialog/register-dialog.component';
 import { UsersComponent } from './users/users.component';
+import { AppMaterialModule } from '../app.material.module'
 
 @NgModule({
   imports: [
     CommonModule,
     AdminRoutingModule,
-    MaterialModule,
-    MdDialogModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AppMaterialModule
   ],
   declarations: [
     AdminComponent,
