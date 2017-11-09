@@ -3,7 +3,9 @@ import { DebugElement, NgZone } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MaterialModule, MdDialog, MdDialogRef, OverlayRef, MdDialogContainer } from '@angular/material';
+import { MatDialogModule, MatToolbarModule, MatCardModule } from '@angular/material';
+import { MatDialog, MatDialogRef, MatDialogContainer } from '@angular/material';
+import { OverlayModule, OverlayRef } from '@angular/cdk/overlay';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { Observable } from 'rxjs/Observable';
@@ -49,7 +51,10 @@ describe('WelcomeComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        MaterialModule,
+        MatDialogModule,
+        MatToolbarModule,
+        MatCardModule,
+        OverlayModule,
         RouterTestingModule,
         NoopAnimationsModule
       ],
@@ -57,7 +62,7 @@ describe('WelcomeComponent', () => {
         WelcomeComponent
       ],
       providers: [
-        MdDialog,
+        MatDialog,
         { provide: AuthenticationService, useValue: authenticationServiceStub }
       ]
     })
@@ -83,7 +88,7 @@ describe('WelcomeComponent', () => {
   it('should have 2 buttons when there is no current user', () => {
     component.currentUser = null;
     fixture.detectChanges();
-    const deButtons = debugEl.queryAll(By.css('button[md-raised-button]'));
+    const deButtons = debugEl.queryAll(By.css('button[mat-raised-button]'));
     const buttons = deButtons.map(d => d.nativeElement);
     expect(buttons.length).toBe(2);
     expect(buttons[0].textContent).toBe('Login');
@@ -95,7 +100,7 @@ describe('WelcomeComponent', () => {
     fixture.detectChanges();
     console.log(component.currentUser);
 
-    const btns = debugEl.queryAll(By.css('button[md-raised-button'));
+    const btns = debugEl.queryAll(By.css('button[mat-raised-button'));
     expect(btns.length).toBe(2);
     expect(btns[0].nativeElement.textContent).toBe('Enter');
     expect(btns[1].nativeElement.textContent).toBe('Logout');
@@ -107,10 +112,12 @@ describe('WelcomeComponent', () => {
     fixture.detectChanges();
     console.log(component.currentUser);
 
-    const btns = debugEl.queryAll(By.css('button[md-raised-button]'));
-    expect(btns.length).toBe(3);
+    const btns = debugEl.queryAll(By.css('button[mat-raised-button]'));
+    const aLinks = debugEl.queryAll(By.css('a[mat-raised-button]'));
+    expect(btns.length).toBe(2);
+    expect(aLinks.length).toBe(1)
     expect(btns[0].nativeElement.textContent).toBe('Enter');
     expect(btns[1].nativeElement.textContent).toBe('Logout');
-    expect(btns[2].nativeElement.textContent).toBe('Administration');
+    expect(aLinks[0].nativeElement.textContent).toBe('Administration');
   });
 });
