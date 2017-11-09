@@ -12,7 +12,7 @@
         <p>
           <button md-raised-button color="primary" (click)="doHome()">Enter</button>
           <button md-raised-button color="warning" (click)="doLogout()" >Logout</button>
-          <button *ngIf="currentUser.admin"  md-raised-button color="accent" (click)="doAdmin()" >Administration</button>
+          <a *ngIf="currentUser.admin"  md-raised-button color="accent" routerLink="/users" >Administration</a>
         </p>
       </div>
       <div *ngIf="!currentUser">
