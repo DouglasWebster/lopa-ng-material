@@ -1,21 +1,21 @@
-<h1 class="mdl-dialog-title" style="text-align: center">App Login</h1>
+<h1 mat-dialog-title style="text-align: center">App Login</h1>
 <div class="warn" *ngIf="loginWarning">User Name and/or Password is not recognised</div>
 <form [formGroup]="loginForm" (ngSubmit)="login()" ngnovalidate>
-  <div class="mdl-dialog-content">
+  <div mat-dialog-content>
     <div class="form-group">
-      <md-input-container style="width: 100%">
-        <input mdInput class="form-control" formControlName="name" placeholder="Name">
-      </md-input-container>
+      <mat-form-field style="width: 100%">
+        <input matInput class="form-control" formControlName="name" placeholder="Name">
+      </mat-form-field>
     </div>
     <div class="form-group">
-      <md-input-container style="width: 100%">
-        <input mdInput type="password" class="form-control" formControlName="password" placeholder="Password">
-      </md-input-container>
+      <mat-form-field style="width: 100%">
+        <input matInput type="password" class="form-control" formControlName="password" placeholder="Password">
+      </mat-form-field>
     </div>
   </div>
 
-  <div class="mdl-dialog-actions" style="text-align: center">
-    <button md-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">Login</button>
-    <button md-button md-dialog-close=false color="warn">Cancel</button>
+  <div mat-dialog-actions style="text-align: center">
+    <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">Login</button>
+    <button mat-button mat-dialog-close=false color="warn">Cancel</button>
   </div>
 </form>
