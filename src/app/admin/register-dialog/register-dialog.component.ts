@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { AuthenticationService, UserService } from '../../shared/services';
 
@@ -20,7 +20,7 @@ export class RegisterDialogComponent implements OnInit {
   constructor(
     private userService: UserService,
     private fb: FormBuilder,
-    private dlgRef: MdDialogRef<RegisterDialogComponent>
+    private dlgRef: MatDialogRef<RegisterDialogComponent>
   ) {
     this.createForm();
   }
