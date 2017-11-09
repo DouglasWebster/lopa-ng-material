@@ -1,8 +1,8 @@
 <div mat-app-background>
-  <md-toolbar color="primary">
-  </md-toolbar>
+  <mat-toolbar color="primary">
+  </mat-toolbar>
 
-  <md-card>
+  <mat-card>
     <h1>LOPA</h1>
     <img src="assets/img/lopaLogo.svg" width="150px" class="user-avatar" />
     <h1>Welcome</h1>
@@ -10,19 +10,19 @@
       <div *ngIf="currentUser">
         <p>You are logged into the LOPA APP</p>
         <p>
-          <button md-raised-button color="primary" (click)="doHome()">Enter</button>
-          <button md-raised-button color="warning" (click)="doLogout()" >Logout</button>
-          <a *ngIf="currentUser.admin"  md-raised-button color="accent" routerLink="/users" >Administration</a>
+          <button mat-raised-button color="primary" (click)="doHome()">Enter</button>
+          <button mat-raised-button color="warning" (click)="doLogout()">Logout</button>
+          <a *ngIf="currentUser.admin" mat-raised-button color="accent" routerLink="/users">Administration</a>
         </p>
       </div>
       <div *ngIf="!currentUser">
         <p>Please login or register</p>
         <p>
-          <button md-raised-button color="primary" (click)="doLogin()">Login</button>
-          <button md-raised-button color="accent" (click)="doNewUser()">Register</button>
+          <button mat-raised-button color="primary" (click)="doLogin()">Login</button>
+          <button mat-raised-button color="accent" (click)="doNewUser()">Register</button>
         </p>
       </div>
     </div>
-  </md-card>
+  </mat-card>
 
 </div>
