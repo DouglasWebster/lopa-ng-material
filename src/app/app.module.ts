@@ -14,6 +14,7 @@ import { BaseRequestOptions } from '@angular/http';
 // Network services
 import { AuthenticationService, UserService } from './shared/services';
 import { LoginGuard } from './shared/guards/login.guard';
+import { AdminGuard } from './shared/guards/admin.guard';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -35,6 +36,7 @@ import { AppComponent } from './app.component';
     AuthenticationService,
     UserService,
     LoginGuard,
+    AdminGuard,
 
       // providers used to create fake backend
     fakeBackendProvider,
