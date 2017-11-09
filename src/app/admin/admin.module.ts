@@ -11,6 +11,7 @@ import { AdminComponent } from './admin.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { LoginDialogComponent } from './login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from './register-dialog/register-dialog.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   imports: [
@@ -24,7 +25,8 @@ import { RegisterDialogComponent } from './register-dialog/register-dialog.compo
     AdminComponent,
     WelcomeComponent,
     LoginDialogComponent,
-    RegisterDialogComponent
+    RegisterDialogComponent,
+    UsersComponent
   ],
   entryComponents: [
     LoginDialogComponent,
