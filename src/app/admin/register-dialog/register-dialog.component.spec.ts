@@ -7,7 +7,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MaterialModule, MdDialogModule, MdDialog, MdDialogRef, MdButton, OverlayContainer } from '@angular/material';
+import { MatDialogModule, MatButtonModule } from '@angular/material';
+import { MatDialog, MatDialogRef, MatButton, MatInputModule, MatProgressSpinnerModule } from '@angular/material';
+import { OverlayModule, OverlayContainer } from '@angular/cdk/overlay';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
@@ -47,9 +49,12 @@ const TEST_DIRECTIVES = [
 
 @NgModule({
   imports: [
-    MdDialogModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    OverlayModule,
     ReactiveFormsModule,
-    MaterialModule,
     NoopAnimationsModule,
     CommonModule
   ],
@@ -86,8 +91,8 @@ describe('RegisterDialogComponent', () => {
 
   };
 
-  let dialog: MdDialog;
-  let dialogRef: MdDialogRef<RegisterDialogComponent>;
+  let dialog: MatDialog;
+  let dialogRef: MatDialogRef<RegisterDialogComponent>;
   let component: RegisterDialogComponent;
 
   let overlayContainerElement: HTMLElement;
@@ -114,7 +119,7 @@ describe('RegisterDialogComponent', () => {
       .compileComponents();
   }));
 
-  beforeEach(inject([MdDialog], (d: MdDialog) => {
+  beforeEach(inject([MatDialog], (d: MatDialog) => {
     dialog = d;
   }));
 
@@ -128,7 +133,7 @@ describe('RegisterDialogComponent', () => {
 
   it('should be created', () => {
     expect(dialogRef.componentInstance instanceof RegisterDialogComponent).toBe(true, 'Failed to open');
-    const heading = overlayContainerElement.querySelector('.mdl-dialog-title') as HTMLHeadingElement;
+    const heading = overlayContainerElement.querySelector('.mat-dialog-title') as HTMLHeadingElement;
     expect(heading.innerText).toEqual('Register User');
   });
 
@@ -140,7 +145,7 @@ describe('RegisterDialogComponent', () => {
   });
 
   it('should open with all fields blank and the login button dissabled', () => {
-    const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+    const btn = overlayContainerElement.querySelector('button[mat-raised-button]');
     const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
     const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
     const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
@@ -156,11 +161,11 @@ describe('RegisterDialogComponent', () => {
     const afterCloseCallback = jasmine.createSpy('afterClose callback');
 
     dialogRef.afterClosed().subscribe(afterCloseCallback);
-    (overlayContainerElement.querySelector('button[md-dialog-close="false"]') as HTMLElement).click();
+    (overlayContainerElement.querySelector('button[mat-dialog-close="false"]') as HTMLElement).click();
     viewContainerFixture.detectChanges();
 
     viewContainerFixture.whenStable().then(() => {
-      expect(overlayContainerElement.querySelector('md-dialog-container')).toBeNull('Dialog box still open');
+      expect(overlayContainerElement.querySelector('mat-dialog-container')).toBeNull('Dialog box still open');
       expect(afterCloseCallback).toHaveBeenCalledWith('false');
     });
   }));
@@ -168,7 +173,7 @@ describe('RegisterDialogComponent', () => {
   describe('should disable register button', () => {
 
     it('with a first name entry but without any other entry', async(() => {
-      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const btn = overlayContainerElement.querySelector('button[mat-raised-button]');
       const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
       const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
       const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
@@ -184,12 +189,12 @@ describe('RegisterDialogComponent', () => {
         expect(lastNameInput.value).toBe('', 'Last Name changed on refresh');
         expect(userNameInput.value).toBe('', 'User Name changed on refresh');
         expect(passwordInput.value).toBe('', 'Password changed on refresh');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
     it('with a last name entry but without any other entry', async(() => {
-      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const btn = overlayContainerElement.querySelector('button[mat-raised-button]');
       const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
       const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
       const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
@@ -205,12 +210,12 @@ describe('RegisterDialogComponent', () => {
         expect(lastNameInput.value).toBe('CD', 'Last Name changed on refresh');
         expect(userNameInput.value).toBe('', 'User Name changed on refresh');
         expect(passwordInput.value).toBe('', 'Password changed on refresh');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
     it('with a user name entry but without any other entry', async(() => {
-      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const btn = overlayContainerElement.querySelector('button[mat-raised-button]');
       const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
       const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
       const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
@@ -226,12 +231,12 @@ describe('RegisterDialogComponent', () => {
         expect(lastNameInput.value).toBe('', 'Last Name changed on refresh');
         expect(userNameInput.value).toBe('EF', 'User Name changed on refresh');
         expect(passwordInput.value).toBe('', 'Password changed on refresh');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
     it('with a password entry but without any other entry', async(() => {
-      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const btn = overlayContainerElement.querySelector('button[mat-raised-button]');
       const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
       const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
       const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
@@ -247,12 +252,12 @@ describe('RegisterDialogComponent', () => {
         expect(lastNameInput.value).toBe('', 'Last Name changed on refresh');
         expect(userNameInput.value).toBe('', 'User Name changed on refresh');
         expect(passwordInput.value).toBe('123', 'Password changed on refresh');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
     it('with a valid first name entry but with other entries invalid', async(() => {
-      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const btn = overlayContainerElement.querySelector('button[mat-raised-button]');
       const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
       const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
       const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
@@ -274,12 +279,12 @@ describe('RegisterDialogComponent', () => {
         expect(lastNameInput.value).toBe('', 'Last Name changed on refresh');
         expect(userNameInput.value).toBe('EF', 'User Name changed on refresh');
         expect(passwordInput.value).toBe('1234567', 'Password changed on refresh');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
     it('with a valid first name and last name entry but with other entries invalid', async(() => {
-      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const btn = overlayContainerElement.querySelector('button[mat-raised-button]');
       const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
       const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
       const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
@@ -301,12 +306,12 @@ describe('RegisterDialogComponent', () => {
         expect(lastNameInput.value).toBe('CD', 'Last Name changed on refresh');
         expect(userNameInput.value).toBe('EF', 'User Name changed on refresh');
         expect(passwordInput.value).toBe('1234567', 'Password changed on refresh');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
     it('with valid entries except for the password entry', async(() => {
-      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const btn = overlayContainerElement.querySelector('button[mat-raised-button]');
       const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
       const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
       const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
@@ -328,12 +333,12 @@ describe('RegisterDialogComponent', () => {
         expect(lastNameInput.value).toBe('CD', 'Last Name changed on refresh');
         expect(userNameInput.value).toBe('EFG', 'User Name changed on refresh');
         expect(passwordInput.value).toBe('1234567', 'Password changed on refresh');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
     it('with valid entries except for the username entry', async(() => {
-      const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+      const btn = overlayContainerElement.querySelector('button[mat-raised-button]');
       const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
       const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
       const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
@@ -355,12 +360,12 @@ describe('RegisterDialogComponent', () => {
         expect(lastNameInput.value).toBe('CD', 'Last Name changed on refresh');
         expect(userNameInput.value).toBe('EF', 'User Name changed on refresh');
         expect(passwordInput.value).toBe('12345678', 'Password changed on refresh');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
   });
   it('should enable the register button when all entries are valid', async(() => {
-    const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+    const btn = overlayContainerElement.querySelector('button[mat-raised-button]');
     const firstNameInput = overlayContainerElement.querySelector('input[formcontrolname="firstName"]') as HTMLInputElement;
     const lastNameInput = overlayContainerElement.querySelector('input[formcontrolname="lastName"]') as HTMLInputElement;
     const userNameInput = overlayContainerElement.querySelector('input[formcontrolname="userName"]') as HTMLInputElement;
@@ -382,7 +387,7 @@ describe('RegisterDialogComponent', () => {
       expect(lastNameInput.value).toBe('CD', 'Last Name changed on refresh');
       expect(userNameInput.value).toBe('EFg', 'User Name changed on refresh');
       expect(passwordInput.value).toBe('12345678', 'Password changed on refresh');
-      expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('false');
+      expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('false');
     });
   }));
 
@@ -437,7 +442,7 @@ describe('RegisterDialogComponent', () => {
     viewContainerFixture.detectChanges();
 
     viewContainerFixture.whenStable().then(() => {
-      expect(overlayContainerElement.querySelector('md-dialog-container')).toBeNull('Dialog box still open');
+      expect(overlayContainerElement.querySelector('mat-dialog-container')).toBeNull('Dialog box still open');
       expect(afterCloseCallback).toHaveBeenCalledWith(userNameInput.value);
     });
   }));
