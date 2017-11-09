@@ -115,7 +115,7 @@ describe('WelcomeComponent', () => {
     const btns = debugEl.queryAll(By.css('button[mat-raised-button]'));
     const aLinks = debugEl.queryAll(By.css('a[mat-raised-button]'));
     expect(btns.length).toBe(2);
-    expect(aLinks.length).toBe(1)
+    expect(aLinks.length).toBe(1);
     expect(btns[0].nativeElement.textContent).toBe('Enter');
     expect(btns[1].nativeElement.textContent).toBe('Logout');
     expect(aLinks[0].nativeElement.textContent).toBe('Administration');

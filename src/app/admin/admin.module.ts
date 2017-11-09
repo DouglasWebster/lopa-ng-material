@@ -12,7 +12,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { LoginDialogComponent } from './login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from './register-dialog/register-dialog.component';
 import { UsersComponent } from './users/users.component';
-import { AppMaterialModule } from '../app.material.module'
+import { AppMaterialModule } from '../app.material.module';
 
 @NgModule({
   imports: [
