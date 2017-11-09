@@ -7,7 +7,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MaterialModule, MdDialogModule, MdDialog, MdDialogRef, MdButton, OverlayContainer } from '@angular/material';
+import { MatDialogModule, MatButtonModule, MatInputModule } from '@angular/material';
+import { MatDialog, MatDialogRef, MatButton, } from '@angular/material';
+import { OverlayModule, OverlayContainer } from '@angular/cdk/overlay';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
@@ -46,9 +48,11 @@ const TEST_DIRECTIVES = [
 
 @NgModule({
   imports: [
-    MdDialogModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatInputModule,
+    OverlayModule,
     ReactiveFormsModule,
-    MaterialModule,
     NoopAnimationsModule,
     CommonModule
   ],
@@ -84,8 +88,8 @@ describe('Login Dialog Component', () => {
     }
   };
 
-  let dialog: MdDialog;
-  let dialogRef: MdDialogRef<LoginDialogComponent>;
+  let dialog: MatDialog;
+  let dialogRef: MatDialogRef<LoginDialogComponent>;
   let component: LoginDialogComponent;
 
   let overlayContainerElement: HTMLElement;
@@ -112,7 +116,7 @@ describe('Login Dialog Component', () => {
       .compileComponents();
   }));
 
-  beforeEach(inject([MdDialog], (d: MdDialog) => {
+  beforeEach(inject([MatDialog], (d: MatDialog) => {
     dialog = d;
   }));
 
@@ -126,14 +130,14 @@ describe('Login Dialog Component', () => {
 
   it('should be created', () => {
     expect(dialogRef.componentInstance instanceof LoginDialogComponent).toBe(true, 'Failed to open');
-    const heading = overlayContainerElement.querySelector('.mdl-dialog-title') as HTMLHeadingElement;
+    const heading = overlayContainerElement.querySelector('.mat-dialog-title') as HTMLHeadingElement;
     expect(heading.innerText).toEqual('App Login');
   });
 
   it('should open with user and password blank and the login button dissabled', () => {
     const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
     const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
-    const btn = overlayContainerElement.querySelector('button[md-raised-button]');
+    const btn = overlayContainerElement.querySelector('button[mat-raised-button]');
     expect(nameInput.value).toEqual('');
     expect(passwordInput.value).toEqual('');
     expect(btn.getAttribute('ng-reflect-disabled')).toBe('true');
@@ -165,11 +169,11 @@ describe('Login Dialog Component', () => {
     const afterCloseCallback = jasmine.createSpy('afterClose callback');
 
     dialogRef.afterClosed().subscribe(afterCloseCallback);
-    (overlayContainerElement.querySelector('button[md-dialog-close="false"]') as HTMLElement).click();
+    (overlayContainerElement.querySelector('button[mat-dialog-close="false"]') as HTMLElement).click();
     viewContainerFixture.detectChanges();
 
     viewContainerFixture.whenStable().then(() => {
-      expect(overlayContainerElement.querySelector('md-dialog-container')).toBeNull('Dialog box still open');
+      expect(overlayContainerElement.querySelector('mat-dialog-container')).toBeNull('Dialog box still open');
       expect(afterCloseCallback).toHaveBeenCalledWith('false');
     });
   }));
@@ -188,7 +192,7 @@ describe('Login Dialog Component', () => {
 
         expect(nameInput.value).toEqual('DD');
         expect(passwordInput.value).toEqual('');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
@@ -204,7 +208,7 @@ describe('Login Dialog Component', () => {
 
         expect(nameInput.value).toEqual('');
         expect(passwordInput.value).toEqual('Password');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
@@ -222,7 +226,7 @@ describe('Login Dialog Component', () => {
 
         expect(nameInput.value).toEqual('ABC');
         expect(passwordInput.value).toEqual('1234567');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
@@ -240,7 +244,7 @@ describe('Login Dialog Component', () => {
 
         expect(nameInput.value).toEqual('AB');
         expect(passwordInput.value).toEqual('12345678');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
 
@@ -258,13 +262,13 @@ describe('Login Dialog Component', () => {
 
         expect(nameInput.value).toEqual('AB');
         expect(passwordInput.value).toEqual('1234567');
-        expect((overlayContainerElement.querySelector('button[md-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
+        expect((overlayContainerElement.querySelector('button[mat-raised-button]')).getAttribute('ng-reflect-disabled')).toBe('true');
       });
     }));
   });
 
   it('should enable the login button when a valid username and password are entered', async(() => {
-    const loginBtn = overlayContainerElement.querySelector('button[md-raised-button]') as HTMLButtonElement;
+    const loginBtn = overlayContainerElement.querySelector('button[mat-raised-button]') as HTMLButtonElement;
     const nameInput = overlayContainerElement.querySelector('input[formcontrolname="name"]') as HTMLInputElement;
     const passwordInput = overlayContainerElement.querySelector('input[formcontrolname="password"]') as HTMLInputElement;
     nameInput.value = 'ABC';
@@ -322,7 +326,7 @@ describe('Login Dialog Component', () => {
     viewContainerFixture.detectChanges();
 
     viewContainerFixture.whenStable().then(() => {
-      expect(overlayContainerElement.querySelector('md-dialog-container')).toBeNull('Dialog box still open');
+      expect(overlayContainerElement.querySelector('mat-dialog-container')).toBeNull('Dialog box still open');
       expect(afterCloseCallback).toHaveBeenCalledWith('mMouse');
     });
   }));
