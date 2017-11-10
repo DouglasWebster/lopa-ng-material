@@ -1,28 +1,35 @@
 <div mat-app-background>
   <mat-toolbar color="primary">
   </mat-toolbar>
-
-  <mat-card>
-    <h1>LOPA</h1>
-    <img src="assets/img/lopaLogo.svg" width="150px" class="user-avatar" />
-    <h1>Welcome</h1>
-    <div>
-      <div *ngIf="currentUser">
-        <p>You are logged into the LOPA APP</p>
-        <p>
-          <button mat-raised-button color="primary" (click)="doHome()">Enter</button>
-          <button mat-raised-button color="warning" (click)="doLogout()">Logout</button>
-          <a *ngIf="currentUser.admin" mat-raised-button color="accent" routerLink="/users">Administration</a>
-        </p>
-      </div>
-      <div *ngIf="!currentUser">
-        <p>Please login or register</p>
-        <p>
-          <button mat-raised-button color="primary" (click)="doLogin()">Login</button>
-          <button mat-raised-button color="accent" (click)="doNewUser()">Register</button>
-        </p>
-      </div>
+  <br>
+  <div fxLayout="row" fxLayoutAlign='center center'>
+    <div fxFlex="33">
+      <mat-card>
+        <div fxLayout="column" fxLayoutAlign='center center' class="alternate-theme">
+          <h1>LOPA</h1>
+          <img src="assets/img/lopaLogo.svg" width="150px" class="user-avatar" />
+          <h1>Welcome {{salutation}}</h1>
+          <div *ngIf="currentUser; else loginBlock">
+            <div fxLayout="column" fxLayoutAlign="center center">
+              <h3>You are logged into the system</h3>
+              <div fxLayout="row" fxLayoutAlign="space-around center">
+                <button mat-raised-button color="primary" (click)="doHome()">Enter</button>
+                <button mat-raised-button color="warn" (click)="doLogout()">Logout</button>
+                <a *ngIf="currentUser.admin" mat-raised-button color="accent" routerLink="/users">Administration</a>
+              </div>
+            </div>
+          </div>
+          <ng-template #loginBlock>
+            <div fxLayout="column" fxLayoutAlign="center center">
+              <h3>Please login or register</h3>
+              <div fxLayout="row" fxLayoutAlign="center center">
+                <button mat-raised-button color="primary" (click)="doLogin()">Login</button>
+                <button mat-raised-button color="accent" (click)="doNewUser()">Register</button>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </mat-card>
     </div>
-  </mat-card>
-
+  </div>
 </div>
