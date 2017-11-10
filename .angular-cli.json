@@ -20,7 +20,8 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "lpa",
       "styles": [
-        "styles.scss"
+        "styles.scss",
+        "theme.scss"
       ],
       "scripts": [
         "../node_modules/hammerjs/hammer.min.js"
