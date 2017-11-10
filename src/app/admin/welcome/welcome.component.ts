@@ -14,6 +14,7 @@ import { AuthenticationService } from '../../shared/services';
 export class WelcomeComponent implements OnInit {
   currentUser: User;
   users: User[] = [];
+  salutation = '';
 
   constructor(
     private authenicationService: AuthenticationService,
@@ -23,6 +24,9 @@ export class WelcomeComponent implements OnInit {
 
   ngOnInit() {
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (this.currentUser) {
+      this.salutation = this.currentUser.firstName;
+    }
   }
 
 
@@ -31,6 +35,7 @@ export class WelcomeComponent implements OnInit {
     loginDlgRef.afterClosed().subscribe(result => {
       console.log('Login Dialog returned', result);
       this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      this.salutation = this.currentUser.firstName;
     });
   }
 
@@ -44,9 +49,10 @@ export class WelcomeComponent implements OnInit {
   public doLogout() {
     this.authenicationService.logout();
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    this.salutation = '';
   }
 
-  public doHome() {}
+  public doHome() { }
 
-  public doAdmin() {}
+  public doAdmin() { }
 }
