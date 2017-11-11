@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from '../register-dialog/register-dialog.component';
-import { User } from '../../shared/models';
+import { IUser } from '../../shared/models';
 import { AuthenticationService } from '../../shared/services';
 
 @Component({
@@ -12,8 +12,8 @@ import { AuthenticationService } from '../../shared/services';
   styleUrls: ['./welcome.component.scss']
 })
 export class WelcomeComponent implements OnInit {
-  currentUser: User;
-  users: User[] = [];
+  currentUser: IUser;
+  users: IUser[] = [];
   salutation = '';
 
   constructor(

@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
-import { User } from '../models/user';
+import { IUser } from '../models';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-  currentUser: User;
+  currentUser: IUser;
   constructor(private router: Router) { }
 
   canActivate(

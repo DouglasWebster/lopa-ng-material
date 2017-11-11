@@ -5,7 +5,7 @@ import { MockBackend } from '@angular/http/testing';
 import { BaseRequestOptions, HttpModule } from '@angular/http';
 
 import { UserService } from './user.service';
-import { User } from '../models/user';
+import { IUser } from '../models';
 
 import { AuthenticationService } from './authentication.service';
 
@@ -39,7 +39,7 @@ describe('AuthenticationService', () => {
   it('should report an error when trying to log in with no users created',
     fakeAsync(inject([AuthenticationService, UserService], (check: AuthenticationService, service: UserService) => {
 
-      const user: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
+      const user: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
       check.login(user.userName, user.password).subscribe(
         data => {
           fail('Login should be returning an error');
@@ -54,7 +54,7 @@ describe('AuthenticationService', () => {
 
   it('should report an error when trying to log in with an invalid user',
     fakeAsync(inject([AuthenticationService, UserService], (check: AuthenticationService, service: UserService) => {
-      const user: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
+      const user: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
 
       service.create(user).subscribe(
         data => { },
@@ -76,7 +76,7 @@ describe('AuthenticationService', () => {
 
   it('should set "localStorage.currentUser" to the user.userName when login successful',
     fakeAsync(inject([AuthenticationService, UserService], (check: AuthenticationService, service: UserService) => {
-      const user: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
+      const user: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
 
       service.create(user).subscribe(
         data => { },
@@ -97,7 +97,7 @@ describe('AuthenticationService', () => {
 
   it('should clear "localStorage.currentUser" when user logs out',
     fakeAsync(inject([AuthenticationService, UserService], (check: AuthenticationService, service: UserService) => {
-      const user: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
+      const user: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
 
       expect(localStorage.currentUser).toBeUndefined();
 

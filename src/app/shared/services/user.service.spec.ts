@@ -5,7 +5,7 @@ import { MockBackend } from '@angular/http/testing';
 import { BaseRequestOptions, HttpModule } from '@angular/http';
 
 import { UserService } from './user.service';
-import { User } from '../models/user';
+import { IUser } from '../models';
 
 describe('UserService', () => {
   beforeEach(() => {
@@ -59,7 +59,7 @@ describe('UserService', () => {
     })));
 
     it('should return null if trying to create a user', async(inject([UserService], (service: UserService) => {
-      const user: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
+      const user: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
 
       service.create(user).subscribe(
         data => {
@@ -72,7 +72,7 @@ describe('UserService', () => {
     })));
 
     it('should return null if trying to delete a user', async(inject([UserService], (service: UserService) => {
-      const user: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
+      const user: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
 
       service.delete(1).subscribe(
         data => {
@@ -85,7 +85,7 @@ describe('UserService', () => {
     })));
 
     it('should return null if trying to update a user', async(inject([UserService], (service: UserService) => {
-      const user: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', 'id': 1};
+      const user: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', 'id': 1};
 
     service.update(user).subscribe(
       data => {
@@ -99,7 +99,7 @@ describe('UserService', () => {
   });
 
   it('should create a user', async(inject([UserService], (service: UserService) => {
-    const user: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
+    const user: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
 
     service.create(user).subscribe(
       (data) => {
@@ -114,8 +114,8 @@ describe('UserService', () => {
   it('should add a second item that has a unique user name', async(inject([UserService], (service: UserService) => {
     console.log('Users :', localStorage.getItem('users'));
 
-    const user0: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
-    const user1: User = { 'userName': 'mMouse', 'password': 'Squeek', 'firstName': 'Micky', 'lastName': 'Mouse', };
+    const user0: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
+    const user1: IUser = { 'userName': 'mMouse', 'password': 'Squeek', 'firstName': 'Micky', 'lastName': 'Mouse', };
 
     service.create(user0).subscribe(
       (data) => {
@@ -139,7 +139,7 @@ describe('UserService', () => {
   it('should not add an item with a duplicate user name', async(inject([UserService], (service: UserService) => {
     console.log('Users :', localStorage.getItem('users'));
 
-    const user0: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
+    const user0: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck', };
 
     service.create(user0).subscribe(
       (data) => {
@@ -161,8 +161,8 @@ describe('UserService', () => {
   })));
 
   it('should return all the users currently registerd', fakeAsync(inject([UserService], (service: UserService) => {
-    const user0: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck' };
-    const user1: User = { 'userName': 'mMouse', 'password': 'Squeek', 'firstName': 'Micky', 'lastName': 'Mouse' };
+    const user0: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck' };
+    const user1: IUser = { 'userName': 'mMouse', 'password': 'Squeek', 'firstName': 'Micky', 'lastName': 'Mouse' };
     const userWithToken = {
       'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald',
       'lastName': 'Duck', 'token': 'fake-jwt-token'
@@ -214,8 +214,8 @@ describe('UserService', () => {
 
 
   it('should be able to delete users given a valid userId', async(inject([UserService], (service: UserService) => {
-    const user0: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck' };
-    const user1: User = { 'userName': 'mMouse', 'password': 'Squeek', 'firstName': 'Micky', 'lastName': 'Mouse' };
+    const user0: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck' };
+    const user1: IUser = { 'userName': 'mMouse', 'password': 'Squeek', 'firstName': 'Micky', 'lastName': 'Mouse' };
     const userWithToken = {
       'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald',
       'lastName': 'Duck', 'token': 'fake-jwt-token'
@@ -236,7 +236,7 @@ describe('UserService', () => {
           () => {
             service.getAll().subscribe(
               data => {
-                const mMouse: User = data.filter(user => {
+                const mMouse: IUser = data.filter(user => {
                   return user.userName === 'mMouse';
                 });
                 mMouseId = mMouse[0].id;
@@ -267,8 +267,8 @@ describe('UserService', () => {
   })));
 
   it('should get user details by supplying a user ID', fakeAsync(inject([UserService], (service: UserService) => {
-    const user0: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck' };
-    const user1: User = { 'userName': 'mMouse', 'password': 'Squeek', 'firstName': 'Micky', 'lastName': 'Mouse' };
+    const user0: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck' };
+    const user1: IUser = { 'userName': 'mMouse', 'password': 'Squeek', 'firstName': 'Micky', 'lastName': 'Mouse' };
     const userWithToken = {
       'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald',
       'lastName': 'Duck', 'token': 'fake-jwt-token'
@@ -309,7 +309,7 @@ describe('UserService', () => {
     service.getAll().subscribe(
       data => {
         console.log('GetAll() returns: ', data);
-        const mMouse: User = data.filter(user => {
+        const mMouse: IUser = data.filter(user => {
           return user.userName === 'mMouse';
         });
         mMouseId = mMouse[0].id;
@@ -330,8 +330,8 @@ describe('UserService', () => {
   })));
 
   it('should be able to update the user information', fakeAsync(inject([UserService], (service: UserService) => {
-    const user0: User = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck' };
-    const user1: User = { 'userName': 'mMouse', 'password': 'Squeek', 'firstName': 'Micky', 'lastName': 'Mouse' };
+    const user0: IUser = { 'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald', 'lastName': 'Duck' };
+    const user1: IUser = { 'userName': 'mMouse', 'password': 'Squeek', 'firstName': 'Micky', 'lastName': 'Mouse' };
     const userWithToken = {
       'userName': 'dDuck', 'password': 'Quack', 'firstName': 'Donald',
       'lastName': 'Duck', 'token': 'fake-jwt-token'
@@ -370,7 +370,7 @@ describe('UserService', () => {
     service.getAll().subscribe(
       data => {
         console.log('GetAll() returns: ', data);
-        const mMouse: User = data.filter(user => {
+        const mMouse: IUser = data.filter(user => {
           return user.userName === 'mMouse';
         });
         user1.id = mMouse[0].id;

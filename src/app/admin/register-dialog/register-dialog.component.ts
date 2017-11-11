@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { AuthenticationService, UserService } from '../../shared/services';
 
-import { User } from '../../shared/models/user';
+import { IUser } from '../../shared/models';
 
 @Component({
   selector: 'lpa-register-dialog',
@@ -13,7 +13,7 @@ import { User } from '../../shared/models/user';
 })
 export class RegisterDialogComponent implements OnInit {
   registerForm: FormGroup;
-  model: User;
+  model: IUser;
   loading = false;
   registerFailure = '';
 

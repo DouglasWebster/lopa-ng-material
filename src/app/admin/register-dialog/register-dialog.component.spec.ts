@@ -18,7 +18,7 @@ import { Subscriber } from 'rxjs/Subscriber';
 
 import { UserService } from '../../shared/services';
 import { RegisterDialogComponent } from './register-dialog.component';
-import { User } from '../../shared/models/user';
+import { IUser } from '../../shared/models';
 
 // helper classes
 // tslint:disable-next-line:directive-selector
@@ -73,7 +73,7 @@ describe('RegisterDialogComponent', () => {
     '[{"firstName":"Micky","lastName":"Mouse","userName":"mMouse", "password":"Password1","admin":true,"id":1}]';
 
   const userServiceStub = {
-    create(user: User) {
+    create(user: IUser) {
       console.log(`UserService stub called with ${user}`);
 
       const username = user.userName;
