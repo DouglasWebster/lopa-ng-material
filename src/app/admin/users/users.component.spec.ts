@@ -125,7 +125,7 @@ export class FakeUserService {
 }
 
 
-fdescribe('UsersComponent', () => {
+describe('UsersComponent', () => {
 
   let component: UsersComponent;
   let fixture: ComponentFixture<UsersComponent>;
