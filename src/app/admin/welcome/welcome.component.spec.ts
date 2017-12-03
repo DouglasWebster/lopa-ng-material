@@ -11,7 +11,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Observable } from 'rxjs/Observable';
 import { Subscriber } from 'rxjs/Subscriber';
 
-import { User } from '../../shared/models';
+import { IUser } from '../../shared/models';
 // import { UserService } from '../../shared/services';
 import { AuthenticationService } from '../../shared/services';
 
