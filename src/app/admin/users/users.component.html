@@ -1,3 +1,27 @@
-<p>
-  users works!
-</p>
+<div mat-app-background>
+  <mat-toolbar color="primary">
+  </mat-toolbar>
+  <br>
+  <div class="user-container mat-elevation-z8" matSort>
+    <mat-table #table [dataSource]="dataSource">
+      <ng-container matColumnDef="firstName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header class="user-header"> First Name</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.firstName}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header class="user-header"> Last Name</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.lastName}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="admin">
+        <mat-header-cell *matHeaderCellDef mat-sort-header class="user-header"> Administrator</mat-header-cell>
+        <mat-cell *matCellDef="let element" (click)="handleCellClick(element)"> {{element.admin}} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="handleRowClick(row)"></mat-row>
+
+    </mat-table>
+  </div>
+</div>
