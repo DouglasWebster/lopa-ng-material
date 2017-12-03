@@ -27,6 +27,8 @@ before_install:
 #  - npm -v
   - yarn global add @angular/cli
 
+install: travis_retry
+
 branches:
   only:
     - master
